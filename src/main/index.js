@@ -1,6 +1,7 @@
 'use strict'
 
 import { app, BrowserWindow } from 'electron'
+import start from './ipc'
 import '../renderer/store'
 
 /**
@@ -46,6 +47,7 @@ app.on('activate', () => {
     createWindow()
   }
 })
+start()
 
 /**
  * Auto Updater
