@@ -27,6 +27,17 @@
     "files": [
       "dist/electron/**/*"
     ],
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "./build/icons/icon.ico",
+      "uninstallerIcon": "./build/icons/icon.ico",
+      "installerHeaderIcon": "./build/icons/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "xiyou"
+    },
     "dmg": {
       "contents": [
         {
@@ -46,10 +57,16 @@
       "icon": "build/icons/icon.icns"
     },
     "win": {
-      "icon": "build/icons/icon.ico"
+      "icon": "build/icons/icon.ico",
+      "target": [{
+        "target":"nsis"
+      }]
     },
     "linux": {
       "icon": "build/icons"
+    },
+    "electronDownload": {
+      "mirror": "https://npm.taobao.org/mirrors/electron/"
     }
   },
   "dependencies": {
@@ -98,6 +115,7 @@
     "html-webpack-plugin": "^3.2.0",
     "listr": "^0.14.3",
     "mini-css-extract-plugin": "0.4.0",
+    "multispinner": "^0.2.1",
     "node-loader": "^0.6.0",
     "node-sass": "^4.9.2",
     "sass-loader": "^7.0.3",

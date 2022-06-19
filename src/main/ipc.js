@@ -66,7 +66,6 @@ const start = () => {
         condition = ''
       }
       const sql = `SELECT COUNT(id) as total FROM cs_goods ${condition}; SELECT * FROM cs_goods ${condition}  ORDER BY ${order.join(',')} LIMIT ${(currentPage - 1) * pageSize},${currentPage * pageSize};`
-      console.log(sql)
       connection.query(sql, function (error, results) {
         connection.release()
         if (error) {
