@@ -3,7 +3,7 @@
 import { app, BrowserWindow } from 'electron'
 import start from './ipc'
 import '../renderer/store'
-
+import path from 'path'
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -21,10 +21,15 @@ function createWindow () {
   /**
    * Initial window options
    */
+  console.log(path.resolve(__dirname, './preload.js'))
   mainWindow = new BrowserWindow({
     height: 563,
     useContentSize: true,
-    width: 1000
+    width: 1000,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
   })
 
   mainWindow.loadURL(winURL)

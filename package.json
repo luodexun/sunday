@@ -58,9 +58,11 @@
     },
     "win": {
       "icon": "build/icons/icon.ico",
-      "target": [{
-        "target":"nsis"
-      }]
+      "target": [
+        {
+          "target": "nsis"
+        }
+      ]
     },
     "linux": {
       "icon": "build/icons"
@@ -71,11 +73,10 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "electron-store": "^4.0.0",
+    "electron-store": "^8.0.2",
     "element-ui": "^2.15.9",
     "mysql": "^2.18.1",
     "vue": "^2.5.16",
-    "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1",
     "vuex-electron": "^1.0.0"
@@ -98,7 +99,7 @@
     "css-loader": "^0.28.11",
     "del": "^3.0.0",
     "devtron": "^1.4.0",
-    "electron": "^2.0.4",
+    "electron": "^15.3.0",
     "electron-builder": "^20.19.2",
     "electron-debug": "^1.5.0",
     "electron-devtools-installer": "^2.2.4",
