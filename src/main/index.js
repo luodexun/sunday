@@ -23,9 +23,13 @@ function createWindow () {
    */
   console.log(path.resolve(__dirname, './preload.js'))
   mainWindow = new BrowserWindow({
-    height: 563,
+    height: 620,
     useContentSize: true,
     width: 1000,
+    minWidth: 1000,
+    minHeight: 620,
+    titleBarStyle: 'hidden',
+    titleBarOverlay: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false

@@ -243,7 +243,7 @@ export default {
 .container {
   width: 100%;
   height: 100%;
-  padding: 2rem 8rem 1rem;
+  padding: 4rem 10% 1rem;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
