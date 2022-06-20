@@ -29,17 +29,17 @@
         <el-table-column prop="title" label="标题" align="center" show-overflow-tooltip></el-table-column>
         <el-table-column prop="price" label="价格" align="center">
           <template #header="{column}">
-            <div class="header_col">
+            <div class="header_col" @click="sort('price')">
               {{ column.label }}
-              <i class="order" :class="order.price" @click="sort('price')"/>
+              <svg-icon :name="order.price" :className="order.price"></svg-icon>
             </div>
           </template>
         </el-table-column>
         <el-table-column prop="stock" label="库存" align="center">
           <template #header="{column}">
-            <div class="header_col">
+            <div class="header_col" @click="sort('stock')">
               {{ column.label }}
-              <i class="order" :class="order.stock" @click="sort('stock')"/>
+              <svg-icon :name="order.stock" :className="order.stock"></svg-icon>
             </div>
           </template>
         </el-table-column>
@@ -311,12 +311,14 @@ export default {
   height: 8px;
 }
 
-.order.asc {
-  background: url("../assets/asc.svg") center/cover no-repeat;
+.asc {
+  color: #f4075a;
+  margin-top: 0.1rem;
 }
 
-.order.desc {
-  background: url("../assets/desc.svg") center/cover no-repeat;
+.desc {
+  color: #0299f5;
+  margin-top: 0.1rem;
 }
 /**
 dialog

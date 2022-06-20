@@ -76,6 +76,8 @@
     "electron-store": "^8.0.2",
     "element-ui": "^2.15.9",
     "mysql": "^2.18.1",
+    "svg-sprite-loader": "^6.0.11",
+    "svgo-loader": "^3.0.1",
     "vue": "^2.5.16",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1",

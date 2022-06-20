@@ -20,7 +20,6 @@ const { VueLoaderPlugin } = require('vue-loader')
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/webpack-configurations.html#white-listing-externals
  */
 let whiteListedModules = ['vue']
-
 let rendererConfig = {
   devtool: '#cheap-module-eval-source-map',
   entry: {
@@ -94,7 +93,24 @@ let rendererConfig = {
             limit: 10000,
             name: 'imgs/[name]--[folder].[ext]'
           }
-        }
+        },
+        exclude: [path.resolve('src/renderer/assets/svg')]
+      },
+      {
+        test: /\.svg$/,
+        use: [
+          { loader: 'svg-sprite-loader',
+            options: {
+              symbolId: 'icon-[name]'
+            }},
+          { loader: 'svgo-loader', options: {
+              plugins: [{
+                name: 'removeAttrs', // 必须指定name！
+                params: {attrs: 'fill'}
+              }]
+            }
+          }
+        ]
       },
       {
         test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,

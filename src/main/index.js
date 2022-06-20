@@ -1,6 +1,7 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+// eslint-disable-next-line standard/object-curly-even-spacing
+import { app, BrowserWindow, ipcMain} from 'electron'
 import start from './ipc'
 import '../renderer/store'
 import path from 'path'
@@ -28,8 +29,9 @@ function createWindow () {
     width: 1000,
     minWidth: 1000,
     minHeight: 620,
-    titleBarStyle: 'hidden',
-    titleBarOverlay: true,
+    // titleBarStyle: 'hidden',
+    frame: false,
+    // titleBarOverlay: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -58,6 +60,17 @@ app.on('activate', () => {
 })
 start()
 
+ipcMain.on('mini', e => mainWindow.minimize())
+ipcMain.on('max', e => {
+  if (mainWindow.isMaximized()) {
+    mainWindow.unmaximize()
+    e.returnValue = {status: 'maximize'}
+  } else {
+    mainWindow.maximize()
+    e.returnValue = {status: 'minimize'}
+  }
+})
+ipcMain.on('close', e => mainWindow.close())
 /**
  * Auto Updater
  *

@@ -5,8 +5,14 @@
     </div>
     <video loop="loop" autoplay="autoplay" ref="bg" class="bgvideo" x5-playsinline="" playsinline="" webkit-playsinline="true">
     </video>
+    <div class="title_custom">
+      <svg-icon name="setting" className="setting" @click="settingVisible=true"></svg-icon>
+      <svg-icon name="mini" className="mini" @click="mini"></svg-icon>
+      <svg-icon :name="status" :className="status" @click="max"></svg-icon>
+      <svg-icon name="close" className="close" @click="close"></svg-icon>
+    </div>
     <router-view></router-view>
-    <el-button icon="el-icon-setting" circle plain size="mini" @click="settingVisible=true" class="setting"></el-button>
+<!--    <el-button icon="el-icon-setting" circle plain size="mini" @click="settingVisible=true" class="setting_btn"></el-button>-->
     <el-dialog
         :visible.sync="settingVisible"
         width="350px"
@@ -73,7 +79,8 @@ export default {
         password: '',
         database: ''
       },
-      loading: true
+      loading: true,
+      status: 'maximize'
     }
   },
   mounted () {
@@ -146,6 +153,16 @@ export default {
       } else {
         this.$message({type: 'error', message: msg})
       }
+    },
+    mini () {
+      ipcRenderer.send('mini')
+    },
+    max () {
+      let {status} = ipcRenderer.sendSync('max')
+      this.status = status
+    },
+    close () {
+      ipcRenderer.send('close')
     }
   }
 }
@@ -167,10 +184,34 @@ export default {
     background-color: white;
     z-index: 10;
   }
-  .setting{
+  .setting_btn{
     position: absolute;
     top: 1rem;
     right: 2rem;
+  }
+  .title_custom{
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    -webkit-app-region: drag;
+  }
+  .setting{
+    color: #1b49bb;
+    padding: 0.5rem 0.7rem;
+  }
+  .mini{
+    color: #f18d0b;
+    padding: 0.5rem 0.4rem;
+  }
+  .minimize,.maximize{
+    color: #44a37c;
+    padding: 0.5rem 0.4rem;
+  }
+  .close{
+    color: #f60559;
+    padding: 0.5rem 0.4rem;
   }
   .bgvideo{
     /*filter: blur(1px);*/

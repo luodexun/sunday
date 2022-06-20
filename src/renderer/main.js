@@ -2,6 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 import './assets/main.css'
 import './element-ui'
+import './assets/index'
 import App from './App'
 import router from './router'
 
