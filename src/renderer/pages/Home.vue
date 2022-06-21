@@ -358,4 +358,8 @@ dialog
   display: flex;
   justify-content: flex-end;
 }
+
+.el-table__empty-block{
+  width: 100% !important;
+}
 </style>

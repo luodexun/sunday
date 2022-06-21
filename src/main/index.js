@@ -34,7 +34,6 @@ function createWindow () {
       contextIsolation: false
     }
   })
-
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {
