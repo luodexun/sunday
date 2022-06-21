@@ -4,7 +4,7 @@
       <template slot="prepend">
         <el-select v-model="select"  placeholder="请输入" style="width: 100px;">
           <el-option label="全部" value=""></el-option>
-          <el-option  v-for="item in fields" :label="item.label" :value="item.key" :key="item.key"></el-option>
+          <el-option  v-for="item in columnsActive" :label="item.label" :value="item.key" :key="item.key"></el-option>
         </el-select>
       </template>
       <template #append>
@@ -26,37 +26,15 @@
           height="100%"
           :data="tableData"
           style="width: 100%">
-        <el-table-column prop="title" label="标题" align="center" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="price" label="价格" align="center">
+        <el-table-column v-for="item in columnsActive" :prop="item.key" :label="item.label" :width="item.width" align="center" :key="item.key" :formatter="item.formatter" show-overflow-tooltip>
           <template #header="{column}">
-            <div class="header_col" @click="sort('price')">
+            <div class="header_col">
               {{ column.label }}
-              <svg-icon :name="order.price" :className="order.price"></svg-icon>
+              <template v-if="item!==false">
+                <svg-icon :name="String(item.sort)" :className="String(item.sort)"  @click="sort(item.key)"></svg-icon>
+              </template>
             </div>
           </template>
-        </el-table-column>
-        <el-table-column prop="stock" label="库存" align="center">
-          <template #header="{column}">
-            <div class="header_col" @click="sort('stock')">
-              {{ column.label }}
-              <svg-icon :name="order.stock" :className="order.stock"></svg-icon>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column
-            prop="author"
-            align="center"
-            label="作者">
-        </el-table-column>
-        <el-table-column
-            prop="texture"
-            align="center"
-            label="材质">
-        </el-table-column>
-        <el-table-column
-            prop="size"
-            align="center"
-            label="尺寸">
         </el-table-column>
         <template #empty>
           <Loading v-if="loading"/>
@@ -91,28 +69,58 @@ export default {
         pageSize: 10,
         total: 0
       },
-      order: {
-        price: 'asc',
-        stock: 'asc'
-      },
-      orderArr: ['price asc', 'stock desc'],
-      form: {
-        host: '',
-        port: '',
-        user: '',
-        password: '',
-        database: ''
-      },
-      fields: [
-        {key: 'title', label: '标题'},
-        {key: 'price', label: '价格'},
-        {key: 'stock', label: '库存'},
-        {key: 'author', label: '作者'},
-        {key: 'texture', label: '材质'},
-        {key: 'size', label: '尺寸'}
+      orderArr: [],
+      columns: [
+        {key: 'sellerRoleid', label: '游戏ID', sort: false, status: true, width: 120},
+        {key: 'level', label: '人物等级', sort: false, status: true, width: 80},
+        {key: 'sellerName', label: '游戏昵称', sort: false, status: true, width: 150},
+        {key: 'playName', label: '角色名称', sort: false, status: true, width: 80},
+        {key: 'areaName', label: '界服名称', sort: false, status: true, width: 80},
+        {key: 'serverId', label: '服务器ID', sort: false, status: true, width: 80},
+        {key: 'serverName', label: '服务器名称', sort: false, status: false, width: 120},
+        {key: 'price', label: '售价', sort: 'asc', status: true, width: 80},
+        {key: 'statusDesc', label: '出售状态', sort: false, status: true, width: 80},
+        {key: 'cbgUrl', label: '藏宝阁链接地址', sort: false, status: false, width: 150},
+        {key: 'gameChannel', label: '游戏渠道', sort: false, status: true, width: 80},
+        {key: 'umupShort', label: '卖家描述', sort: false, status: false, width: 80},
+        {key: 'xiaYu', label: '仙玉', sort: false, status: true, width: 80},
+        {key: 'silver', label: '大话币(银两)', sort: false, status: true, width: 150},
+        {key: 'hp', label: '人物气血值', sort: 'asc', status: true, width: 100},
+        {key: 'mp', label: '人物法力值', sort: 'asc', status: true, width: 100},
+        {key: 'ap', label: '人物攻击力', sort: 'asc', status: true, width: 100},
+        {key: 'sp', label: '人物敏捷', sort: 'asc', status: true, width: 80},
+        {key: 'factionLevel', label: '帮派修炼', sort: false, status: true, width: 80},
+        {key: 'tianYanLevel', label: '天演策', sort: false, status: true, width: 80},
+        {key: 'wuXingLevel', label: '五行等级', sort: false, status: true, width: 80},
+        {key: 'fire', label: '火五行', sort: false, status: true, width: 80},
+        {key: 'soil', label: '土五行', sort: false, status: true, width: 80},
+        {key: 'water', label: '水五行', sort: false, status: true, width: 80},
+        {key: 'wood', label: '木五行', sort: false, status: true, width: 80},
+        {key: 'gold', label: '金五行', sort: false, status: true, width: 80},
+        {key: 'suitLevel',
+          label: '套装品阶',
+          sort: false,
+          status: true,
+          width: 80,
+          formatter: (row, column, cellValue, index) => {
+            switch (cellValue) {
+              case 1:return '把玩'
+              case 2:return '珍藏'
+              case 3:return '无价'
+              default:return '未知'
+            }
+          }},
+        {key: 'suitName', label: '套装', sort: false, status: true, width: 80},
+        {key: 'status', label: '处理状态', sort: false, status: true, width: 80, formatter: (row, column, cellValue, index) => cellValue === '1' ? '处理成功' : '处理失败'},
+        {key: 'statusCode', label: '返回状态编码', sort: false, status: true, width: 120},
+        {key: 'createTime', label: '创建时间', sort: false, status: true, width: 150, formatter: (row, column, cellValue, index) => new Date(cellValue).toLocaleString()},
+        {key: 'updateTime', label: '更新时间', sort: false, status: true, width: 150, formatter: (row, column, cellValue, index) => new Date(cellValue).toLocaleString()}
       ],
       tableData: []
     }
+  },
+  beforeMount () {
+    this.orderArr = this.orderList.map(item => `${item.key} ${item.sort}`)
   },
   computed: {
     params () {
@@ -122,6 +130,12 @@ export default {
       } else {
         return {pagination: this.pagination, order: this.orderArr}
       }
+    },
+    columnsActive () {
+      return this.columns.filter(item => item.status)
+    },
+    orderList () {
+      return this.columns.filter(item => item.status && item.sort !== false)
     }
   },
   components: {
@@ -129,13 +143,14 @@ export default {
   },
   methods: {
     sort (field) {
-      this.order[field] = this.order[field] === 'asc' ? 'desc' : 'asc'
+      let column = this.columns.find(item => item.key === field)
+      column.sort = column.sort === 'asc' ? 'desc' : 'asc'
       this.orderArr = []
-      for (const [key, vaue] of Object.entries(this.order)) {
-        if (key === field) {
-          this.orderArr.unshift(`${key} ${vaue}`)
+      for (const item of this.orderList) {
+        if (item.key === field) {
+          this.orderArr.unshift(`${item.key} ${item.sort}`)
         } else {
-          this.orderArr.push(`${key} ${vaue}`)
+          this.orderArr.push(`${item.key} ${item.sort}`)
         }
       }
       this.query()
@@ -144,6 +159,7 @@ export default {
       this.loading = true
       this.tableData = []
       let {code, data, msg, total} = ipcRenderer.sendSync('select', this.params)
+      console.log(data)
       if (code === 0) {
         setTimeout(() => {
           this.tableData = data
