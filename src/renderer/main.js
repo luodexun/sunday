@@ -15,3 +15,7 @@ new Vue({
   router,
   template: '<App/>'
 }).$mount('#app')
+
+if (module.hot) {
+  module.hot.accept()
+}

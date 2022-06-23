@@ -5,8 +5,9 @@ const electron = require('electron')
 const path = require('path')
 const { say } = require('cfonts')
 const { spawn } = require('child_process')
+const express = require('express')
 const webpack = require('webpack')
-const WebpackDevServer = require('webpack-dev-server')
+const webpackDevMiddleware = require('webpack-dev-middleware')
 const webpackHotMiddleware = require('webpack-hot-middleware')
 
 const mainConfig = require('./webpack.main.config')
@@ -14,7 +15,6 @@ const rendererConfig = require('./webpack.renderer.config')
 
 let electronProcess = null
 let manualRestart = false
-let hotMiddleware
 
 function logStats (proc, data) {
   let log = ''
@@ -40,41 +40,31 @@ function logStats (proc, data) {
 
 function startRenderer () {
   return new Promise((resolve, reject) => {
-    rendererConfig.entry.renderer = [path.join(__dirname, 'dev-client')].concat(rendererConfig.entry.renderer)
+    const app = express()
+    rendererConfig.entry.renderer = ['webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000'].concat(rendererConfig.entry.renderer)
     rendererConfig.mode = 'development'
     const compiler = webpack(rendererConfig)
-    hotMiddleware = webpackHotMiddleware(compiler, {
-      log: false,
-      heartbeat: 2500
-    })
-
-    compiler.hooks.compilation.tap('compilation', compilation => {
-      compilation.hooks.htmlWebpackPluginAfterEmit.tapAsync('html-webpack-plugin-after-emit', (data, cb) => {
-        hotMiddleware.publish({ action: 'reload' })
-        cb()
-      })
-    })
+    // 使用webpack-dev-middleware中间件
+    app.use(webpackDevMiddleware(compiler, {
+      publicPath: rendererConfig.output.publicPath
+    }))
 
     compiler.hooks.done.tap('done', stats => {
       logStats('Renderer', stats)
     })
 
-    const server = new WebpackDevServer(
-      compiler,
-      {
-        contentBase: path.join(__dirname, '../'),
-        quiet: true,
-        hot: true,
-        before (app, ctx) {
-          // app.use(hotMiddleware)
-          ctx.middleware.waitUntilValid(() => {
-            resolve()
-          })
-        }
-      }
-    )
+    // 使用webpack-hot-middleware中间件，配置在console台输出日志
+    app.use(webpackHotMiddleware(compiler, {
+      log: console.log, path: '/__webpack_hmr', heartbeat: 10 * 1000
+    }))
 
-    server.listen(9080)
+    app.use(express.static(rendererConfig.output.path))
+
+    // Serve the files on port 9080.
+    app.listen(9080, function () {
+      resolve()
+      console.log('Example app listening on port 9080!\n')
+    })
   })
 }
 
@@ -86,7 +76,6 @@ function startMain () {
 
     compiler.hooks.watchRun.tapAsync('watch-run', (compilation, done) => {
       logStats('Main', chalk.white.bold('compiling...'))
-      hotMiddleware.publish({ action: 'compiling' })
       done()
     })
 
@@ -128,7 +117,7 @@ function startElectron () {
   }
 
   electronProcess = spawn(electron, args)
-  
+
   electronProcess.stdout.on('data', data => {
     electronLog(data, 'blue')
   })
@@ -162,8 +151,8 @@ function greeting () {
   const cols = process.stdout.columns
   let text = ''
 
-  if (cols > 104) text = 'electron-vue'
-  else if (cols > 76) text = 'electron-|vue'
+  if (cols > 104) text = 'electron-xi'
+  else if (cols > 76) text = 'electron-|xi'
   else text = false
 
   if (text) {
@@ -172,7 +161,7 @@ function greeting () {
       font: 'simple3d',
       space: false
     })
-  } else console.log(chalk.yellow.bold('\n  electron-vue'))
+  } else console.log(chalk.yellow.bold('\n  electron-xi'))
   console.log(chalk.blue('  getting ready...') + '\n')
 }
 

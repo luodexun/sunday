@@ -6,7 +6,7 @@ const path = require('path')
 const { dependencies } = require('../package.json')
 const webpack = require('webpack')
 
-const MinifyPlugin = require("babel-minify-webpack-plugin")
+const MinifyPlugin = require('babel-minify-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -21,9 +21,9 @@ const { VueLoaderPlugin } = require('vue-loader')
  */
 let whiteListedModules = ['vue']
 let rendererConfig = {
-  devtool: '#cheap-module-eval-source-map',
+  devtool: 'eval-cheap-module-source-map',
   entry: {
-    renderer: path.join(__dirname, process.platform==='darwin'?'../src/renderer/main.js':'../src/renderer/winEntry.js')
+    renderer: path.join(__dirname, process.platform === 'darwin' ? '../src/renderer/main.js' : '../src/renderer/winEntry.js')
   },
   externals: [
     ...Object.keys(dependencies || {}).filter(d => !whiteListedModules.includes(d))
@@ -40,6 +40,10 @@ let rendererConfig = {
             formatter: require('eslint-friendly-formatter')
           }
         }
+      },
+      {
+        test: /\.vue$/,
+        use: 'vue-loader'
       },
       {
         test: /\.scss$/,
@@ -71,25 +75,10 @@ let rendererConfig = {
         use: 'node-loader'
       },
       {
-        test: /\.vue$/,
-        use: {
-          loader: 'vue-loader',
-          options: {
-            extractCSS: process.env.NODE_ENV === 'production',
-            loaders: {
-              postcss:'vue-style-loader!css-loader!sass-loade!postcss-loader',
-              sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1',
-              scss: 'vue-style-loader!css-loader!sass-loader',
-              less: 'vue-style-loader!css-loader!less-loader'
-            }
-          }
-        }
-      },
-      {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         use: {
           loader: 'url-loader',
-          query: {
+          options: {
             limit: 10000,
             name: 'imgs/[name]--[folder].[ext]'
           }
@@ -103,7 +92,8 @@ let rendererConfig = {
             options: {
               symbolId: 'icon-[name]'
             }},
-          { loader: 'svgo-loader', options: {
+          { loader: 'svgo-loader',
+            options: {
               plugins: [{
                 name: 'removeAttrs', // 必须指定name！
                 params: {attrs: 'fill'}
@@ -124,13 +114,16 @@ let rendererConfig = {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
         use: {
           loader: 'url-loader',
-          query: {
+          options: {
             limit: 10000,
             name: 'fonts/[name]--[folder].[ext]'
           }
         }
       }
     ]
+  },
+  cache: {
+    type: 'filesystem' // 使用本地缓存，默认使用内存
   },
   node: {
     __dirname: process.env.NODE_ENV !== 'production',
@@ -142,17 +135,17 @@ let rendererConfig = {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: path.resolve(__dirname, '../src/index.ejs'),
-      templateParameters(compilation, assets, options) {
+      templateParameters (compilation, assets, options) {
         return {
           compilation: compilation,
           webpack: compilation.getStats().toJson(),
           webpackConfig: compilation.options,
           htmlWebpackPlugin: {
             files: assets,
-            options: options,
+            options: options
           },
-          process,
-        };
+          process
+        }
       },
       minify: {
         collapseWhitespace: true,
@@ -162,12 +155,12 @@ let rendererConfig = {
       nodeModules: process.env.NODE_ENV !== 'production'
         ? path.resolve(__dirname, '../node_modules')
         : false
-    }),
-    new webpack.NoEmitOnErrorsPlugin()
+    })
   ],
   output: {
     filename: '[name].js',
     libraryTarget: 'commonjs2',
+    publicPath: '/',
     path: path.join(__dirname, '../dist/electron')
   },
   resolve: {
@@ -186,6 +179,7 @@ let rendererConfig = {
 if (process.env.NODE_ENV !== 'production') {
   rendererConfig.plugins.push(
     new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.DefinePlugin({
       '__static': `"${path.join(__dirname, '../static').replace(/\\/g, '\\\\')}"`
     })

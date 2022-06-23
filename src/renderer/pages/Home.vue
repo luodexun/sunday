@@ -20,13 +20,16 @@
         <el-button icon="el-icon-search" circle @click="query" class="select-btn"/>
       </template>
     </el-input>
+    <div style="margin: 0.5rem;z-index: 2;text-align: right">
+        <el-button icon="el-icon-s-operation" circle plain size="mini" @click="columnsVisible=true" ></el-button>
+    </div>
     <el-card>
       <el-table
           size="mini"
           height="100%"
           :data="tableData"
           style="width: 100%">
-        <el-table-column v-for="item in columnsActive" :prop="item.key" :label="item.label" :width="item.width" align="center" :key="item.key" :formatter="item.formatter" show-overflow-tooltip>
+        <el-table-column v-for="item in columnsActive" :prop="item.key" :label="item.label" :width="item.width" align="center" :key="item.id" :formatter="item.formatter" show-overflow-tooltip>
           <template #header="{column}">
             <div class="header_col">
               {{ column.label }}
@@ -51,75 +54,122 @@
         :page-size="pagination.pageSize"
         :total="pagination.total">
     </el-pagination>
+    <el-drawer
+        :visible.sync="columnsVisible"
+        :size="200"
+        direction="rtl"
+        :before-close="complete"
+        @closeDrawer="setColumns"
+        :show-close="false"
+        append-to-body>
+      <template #title>
+        <el-checkbox :indeterminate="isIndeterminate" :value="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+      </template>
+      <el-checkbox-group v-model="columnsActive">
+        <draggable
+            class="list-group"
+            tag="ul"
+            v-model="list"
+            v-bind="dragOptions"
+            @start="drag = true"
+            @end="drag = false"
+        >
+          <transition-group type="transition" :name="!drag ? 'flip-list' : null">
+            <li
+                class="list-group-item"
+                v-for="element in list"
+                :key="element.key"
+            >
+              <el-checkbox :label="element">{{ element.label }}</el-checkbox>
+            </li>
+          </transition-group>
+        </draggable>
+      </el-checkbox-group>
+    </el-drawer>
   </div>
 </template>
 
 <script>
 import {ipcRenderer} from 'electron'
+// import {random} from 'xijs'
+import draggable from 'vuedraggable'
 import Loading from '../components/Loading'
+const columns = [
+  {id: '01', key: 'sellerRoleid', label: '游戏ID', sort: false, status: true, width: 120},
+  {id: '02', key: 'level', label: '人物等级', sort: false, status: true, width: 80},
+  {id: '03', key: 'sellerName', label: '游戏昵称', sort: false, status: true, width: 150},
+  {id: '04', key: 'playName', label: '角色名称', sort: false, status: true, width: 80},
+  {id: '05', key: 'areaName', label: '界服名称', sort: false, status: true, width: 80},
+  {id: '06', key: 'serverId', label: '服务器ID', sort: false, status: true, width: 80},
+  {id: '08', key: 'price', label: '售价', sort: 'asc', status: true, width: 80},
+  {id: '09', key: 'statusDesc', label: '出售状态', sort: false, status: true, width: 80},
+  {id: '10', key: 'cbgUrl', label: '藏宝阁链接地址', sort: false, status: false, width: 150},
+  {id: '11', key: 'gameChannel', label: '游戏渠道', sort: false, status: true, width: 80},
+  {id: '12', key: 'umupShort', label: '卖家描述', sort: false, status: false, width: 80},
+  {id: '13', key: 'xiaYu', label: '仙玉', sort: false, status: true, width: 80},
+  {id: '14', key: 'silver', label: '大话币(银两)', sort: false, status: true, width: 150},
+  {id: '15', key: 'hp', label: '人物气血值', sort: 'asc', status: true, width: 100},
+  {id: '16', key: 'mp', label: '人物法力值', sort: 'asc', status: true, width: 100},
+  {id: '17', key: 'ap', label: '人物攻击力', sort: 'asc', status: true, width: 100},
+  {id: '18', key: 'sp', label: '人物敏捷', sort: 'asc', status: true, width: 80},
+  {id: '19', key: 'factionLevel', label: '帮派修炼', sort: false, status: true, width: 80},
+  {id: '20', key: 'tianYanLevel', label: '天演策', sort: false, status: true, width: 80},
+  {id: '21', key: 'wuXingLevel', label: '五行等级', sort: false, status: true, width: 80},
+  {id: '22', key: 'fire', label: '火五行', sort: false, status: true, width: 80},
+  {id: '23', key: 'soil', label: '土五行', sort: false, status: true, width: 80},
+  {id: '24', key: 'water', label: '水五行', sort: false, status: true, width: 80},
+  {id: '25', key: 'wood', label: '木五行', sort: false, status: true, width: 80},
+  {id: '26', key: 'gold', label: '金五行', sort: false, status: true, width: 80},
+  {id: '27',
+    key: 'suitLevel',
+    label: '套装品阶',
+    sort: false,
+    status: true,
+    width: 80,
+    formatter: (row, column, cellValue, index) => {
+      switch (cellValue) {
+        case 1:return '把玩'
+        case 2:return '珍藏'
+        case 3:return '无价'
+        default:return '未知'
+      }
+    }},
+  {id: '28', key: 'suitName', label: '套装', sort: false, status: true, width: 80},
+  {id: '29', key: 'status', label: '处理状态', sort: false, status: true, width: 80, formatter: (row, column, cellValue, index) => cellValue === '1' ? '处理成功' : '处理失败'},
+  {id: '30', key: 'statusCode', label: '返回状态编码', sort: false, status: true, width: 120},
+  {id: '31', key: 'createTime', label: '创建时间', sort: false, status: true, width: 150, formatter: (row, column, cellValue, index) => new Date(cellValue).toLocaleString()},
+  {id: '32', key: 'updateTime', label: '更新时间', sort: false, status: true, width: 150, formatter: (row, column, cellValue, index) => new Date(cellValue).toLocaleString()}
+]
 export default {
   data () {
     return {
       input: '',
       select: '',
       isBlur: true,
+      columnsVisible: false,
       loading: false,
+      drag: false,
       pagination: {
         currentPage: 1,
         pageSize: 10,
         total: 0
       },
       orderArr: [],
-      columns: [
-        {key: 'sellerRoleid', label: '游戏ID', sort: false, status: true, width: 120},
-        {key: 'level', label: '人物等级', sort: false, status: true, width: 80},
-        {key: 'sellerName', label: '游戏昵称', sort: false, status: true, width: 150},
-        {key: 'playName', label: '角色名称', sort: false, status: true, width: 80},
-        {key: 'areaName', label: '界服名称', sort: false, status: true, width: 80},
-        {key: 'serverId', label: '服务器ID', sort: false, status: true, width: 80},
-        {key: 'serverName', label: '服务器名称', sort: false, status: false, width: 120},
-        {key: 'price', label: '售价', sort: 'asc', status: true, width: 80},
-        {key: 'statusDesc', label: '出售状态', sort: false, status: true, width: 80},
-        {key: 'cbgUrl', label: '藏宝阁链接地址', sort: false, status: false, width: 150},
-        {key: 'gameChannel', label: '游戏渠道', sort: false, status: true, width: 80},
-        {key: 'umupShort', label: '卖家描述', sort: false, status: false, width: 80},
-        {key: 'xiaYu', label: '仙玉', sort: false, status: true, width: 80},
-        {key: 'silver', label: '大话币(银两)', sort: false, status: true, width: 150},
-        {key: 'hp', label: '人物气血值', sort: 'asc', status: true, width: 100},
-        {key: 'mp', label: '人物法力值', sort: 'asc', status: true, width: 100},
-        {key: 'ap', label: '人物攻击力', sort: 'asc', status: true, width: 100},
-        {key: 'sp', label: '人物敏捷', sort: 'asc', status: true, width: 80},
-        {key: 'factionLevel', label: '帮派修炼', sort: false, status: true, width: 80},
-        {key: 'tianYanLevel', label: '天演策', sort: false, status: true, width: 80},
-        {key: 'wuXingLevel', label: '五行等级', sort: false, status: true, width: 80},
-        {key: 'fire', label: '火五行', sort: false, status: true, width: 80},
-        {key: 'soil', label: '土五行', sort: false, status: true, width: 80},
-        {key: 'water', label: '水五行', sort: false, status: true, width: 80},
-        {key: 'wood', label: '木五行', sort: false, status: true, width: 80},
-        {key: 'gold', label: '金五行', sort: false, status: true, width: 80},
-        {key: 'suitLevel',
-          label: '套装品阶',
-          sort: false,
-          status: true,
-          width: 80,
-          formatter: (row, column, cellValue, index) => {
-            switch (cellValue) {
-              case 1:return '把玩'
-              case 2:return '珍藏'
-              case 3:return '无价'
-              default:return '未知'
-            }
-          }},
-        {key: 'suitName', label: '套装', sort: false, status: true, width: 80},
-        {key: 'status', label: '处理状态', sort: false, status: true, width: 80, formatter: (row, column, cellValue, index) => cellValue === '1' ? '处理成功' : '处理失败'},
-        {key: 'statusCode', label: '返回状态编码', sort: false, status: true, width: 120},
-        {key: 'createTime', label: '创建时间', sort: false, status: true, width: 150, formatter: (row, column, cellValue, index) => new Date(cellValue).toLocaleString()},
-        {key: 'updateTime', label: '更新时间', sort: false, status: true, width: 150, formatter: (row, column, cellValue, index) => new Date(cellValue).toLocaleString()}
-      ],
+      columns: [],
+      columnsTemplate: [],
       tableData: []
     }
   },
   beforeMount () {
+    let data = ipcRenderer.sendSync('getColumns')
+    if (data) {
+      data = data.map(item => {
+        let formatter = columns.find(element => element.key === item.key)
+        if (formatter) item.formatter = formatter.formatter
+        return item
+      })
+    }
+    this.columns = data || columns
     this.orderArr = this.orderList.map(item => `${item.key} ${item.sort}`)
   },
   computed: {
@@ -131,15 +181,55 @@ export default {
         return {pagination: this.pagination, order: this.orderArr}
       }
     },
-    columnsActive () {
-      return this.columns.filter(item => item.status)
+    columnsActive: {
+      get () {
+        if (this.columnsTemplate.length === 0) {
+          return this.columns.filter(item => item.status)
+        } else {
+          return this.columnsTemplate.filter(item => item.status)
+        }
+      },
+      set (value) {
+        let cols = this.columnsTemplate.length === 0 ? columns : this.columnsTemplate
+        this.columnsTemplate = cols.map(item => {
+          item.status = value.some(element => element.key === item.key)
+          return item
+        })
+      }
+    },
+    list: {
+      get () {
+        if (this.columnsTemplate.length === 0) {
+          return this.columns
+        } else {
+          return this.columnsTemplate
+        }
+      },
+      set (value) {
+        this.columnsTemplate = value
+      }
     },
     orderList () {
       return this.columns.filter(item => item.status && item.sort !== false)
+    },
+    checkAll () {
+      return this.columns.every(item => item.status)
+    },
+    isIndeterminate () {
+      return this.columns.some(item => item.status) && !this.checkAll
+    },
+    dragOptions () {
+      return {
+        animation: 200,
+        group: 'description',
+        disabled: false,
+        ghostClass: 'ghost'
+      }
     }
   },
   components: {
-    Loading
+    Loading,
+    draggable
   },
   methods: {
     sort (field) {
@@ -159,7 +249,6 @@ export default {
       this.loading = true
       this.tableData = []
       let {code, data, msg, total} = ipcRenderer.sendSync('select', this.params)
-      console.log(data)
       if (code === 0) {
         setTimeout(() => {
           this.tableData = data
@@ -169,6 +258,26 @@ export default {
       } else {
         this.$message({type: 'error', message: msg})
       }
+    },
+    handleCheckAllChange (val) {
+      this.columnsTemplate = this.columns.map(item => {
+        item.status = val
+        return item
+      })
+    },
+    complete (done) {
+      this.columns = this.columnsTemplate.map(item => {
+        item.id = item.id.length > 3 ? item.id.slice(0, -1) : item.id + 9
+        return item
+      })
+      done()
+    },
+    setColumns () {
+      const columns = this.columns.map(item => {
+        delete item['formatter']
+        return item
+      })
+      ipcRenderer.send('setColumns', columns)
     }
   }
 }
@@ -229,7 +338,7 @@ export default {
   background-color: rgba(0, 0, 51, 0.55);
   border-radius: 7px;
   border: 1px solid #46ded9;
-  margin: 2rem 0 1rem;
+  margin-bottom:1rem;
   z-index: 2;
 }
 
@@ -361,5 +470,25 @@ dialog
 
 .el-table__empty-block{
   width: 100% !important;
+}
+
+.flip-list-move {
+  transition: transform 0.5s;
+}
+.no-move {
+  transition: transform 0s;
+}
+.ghost {
+  opacity: 0.5;
+  background: #c8ebfb;
+}
+.list-group {
+  min-height: 20px;
+}
+.list-group-item {
+  cursor: move;
+}
+.list-group-item i {
+  cursor: pointer;
 }
 </style>

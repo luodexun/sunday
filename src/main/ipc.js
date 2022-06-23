@@ -49,6 +49,13 @@ const start = () => {
   ipcMain.on('config', (event) => {
     event.returnValue = store.get('config')
   })
+
+  ipcMain.on('getColumns', (event) => {
+    event.returnValue = store.get('columns')
+  })
+  ipcMain.on('setColumns', (event, columns) => {
+    store.set('columns', columns)
+  })
   ipcMain.on('select', (event, params) => {
     pool.getConnection(function (err, connection) {
       if (err) {
@@ -57,14 +64,19 @@ const start = () => {
       }
       let {condition, pagination: {currentPage, pageSize}, order} = params
       if (condition) {
-        if (condition.isBlur) {
-          condition = `WHERE ${condition.field} LIKE '%${condition.value}%'`
+        if (/^(\d+)~(\d+)$/.test(condition.value)) {
+          condition = `WHERE ${condition.field} BETWEEN ${RegExp.$1} AND ${RegExp.$2}`
         } else {
-          condition = `WHERE ${condition.field} = '${condition.value}'`
+          if (condition.isBlur) {
+            condition = `WHERE ${condition.field} LIKE '%${condition.value}%'`
+          } else {
+            condition = `WHERE ${condition.field} = '${condition.value}'`
+          }
         }
       } else {
         condition = ''
       }
+      console.log(condition)
       const sql = `SELECT COUNT(sellerRoleid) as total FROM cbg_role_info ${condition}; SELECT * FROM cbg_role_info ${condition}  ORDER BY ${order.join(',')} LIMIT ${(currentPage - 1) * pageSize},${currentPage * pageSize};`
       console.log(sql)
       connection.query(sql, function (error, results) {
