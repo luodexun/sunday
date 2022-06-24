@@ -1,33 +1,14 @@
-'use strict'
-
-process.env.BABEL_ENV = 'renderer'
-
 const path = require('path')
-const { dependencies } = require('../package.json')
-const webpack = require('webpack')
-
-const MinifyPlugin = require('babel-minify-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const {getExternals, resolve, getCdnConfig} = require('./utils')
+const {VueLoaderPlugin} = require('vue-loader')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const { VueLoaderPlugin } = require('vue-loader')
-
-/**
- * List of node_modules to include in webpack bundle
- *
- * Required for specific packages like Vue UI libraries
- * that provide pure *.vue files that need compiling
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/webpack-configurations.html#white-listing-externals
- */
-let whiteListedModules = ['vue']
-let rendererConfig = {
+module.exports = {
   devtool: 'eval-cheap-module-source-map',
   entry: {
     renderer: path.join(__dirname, process.platform === 'darwin' ? '../src/renderer/main.js' : '../src/renderer/winEntry.js')
   },
-  externals: [
-    ...Object.keys(dependencies || {}).filter(d => !whiteListedModules.includes(d))
-  ],
+  externals: getExternals(),
   module: {
     rules: [
       {
@@ -52,10 +33,6 @@ let rendererConfig = {
       {
         test: /\.sass$/,
         use: ['vue-style-loader', 'css-loader', 'sass-loader?indentedSyntax']
-      },
-      {
-        test: /\.less$/,
-        use: ['vue-style-loader', 'css-loader', 'less-loader']
       },
       {
         test: /\.css$/,
@@ -133,28 +110,14 @@ let rendererConfig = {
     new VueLoaderPlugin(),
     new MiniCssExtractPlugin({filename: 'styles.css'}),
     new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: path.resolve(__dirname, '../src/index.ejs'),
-      templateParameters (compilation, assets, options) {
-        return {
-          compilation: compilation,
-          webpack: compilation.getStats().toJson(),
-          webpackConfig: compilation.options,
-          htmlWebpackPlugin: {
-            files: assets,
-            options: options
-          },
-          process
-        }
-      },
+      template: resolve('public/index.html'),
+      inject: 'body',
       minify: {
-        collapseWhitespace: true,
-        removeAttributeQuotes: true,
-        removeComments: true
+        removeComments: true, // 移除HTML中的注释
+        collapseWhitespace: true, // 删除空符与换符
+        minifyCSS: true // 压缩内联css
       },
-      nodeModules: process.env.NODE_ENV !== 'production'
-        ? path.resolve(__dirname, '../node_modules')
-        : false
+      cdnConfig: getCdnConfig()
     })
   ],
   output: {
@@ -172,42 +135,3 @@ let rendererConfig = {
   },
   target: 'electron-renderer'
 }
-
-/**
- * Adjust rendererConfig for development settings
- */
-if (process.env.NODE_ENV !== 'production') {
-  rendererConfig.plugins.push(
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.DefinePlugin({
-      '__static': `"${path.join(__dirname, '../static').replace(/\\/g, '\\\\')}"`
-    })
-  )
-}
-
-/**
- * Adjust rendererConfig for production settings
- */
-if (process.env.NODE_ENV === 'production') {
-  rendererConfig.devtool = ''
-
-  rendererConfig.plugins.push(
-    new MinifyPlugin(),
-    new CopyWebpackPlugin([
-      {
-        from: path.join(__dirname, '../static'),
-        to: path.join(__dirname, '../dist/electron/static'),
-        ignore: ['.*']
-      }
-    ]),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': '"production"'
-    }),
-    new webpack.LoaderOptionsPlugin({
-      minimize: true
-    })
-  )
-}
-
-module.exports = rendererConfig

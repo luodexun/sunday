@@ -11,8 +11,8 @@ const Listr = require('listr')
 const Multispinner = require('multispinner')
 
 
-const mainConfig = require('./webpack.main.config')
-const rendererConfig = require('./webpack.renderer.config')
+const mainConfig = require('./webpack.main')
+const rendererConfig = require('./webpack.dev')
 const webConfig = require('./webpack.web.config')
 
 const doneLog = chalk.bgGreen.white(' DONE ') + ' '
