@@ -69,7 +69,17 @@
     },
     "electronDownload": {
       "mirror": "https://npm.taobao.org/mirrors/electron/"
-    }
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "luodexun",
+        "repo": "https://github.com/luodexun/west.git",
+        "private": false,
+        "token": "***",
+        "releaseType": "release"
+      }
+    ]
   },
   "dependencies": {
     "@babel/runtime": "^7.18.3",
