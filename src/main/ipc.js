@@ -76,8 +76,8 @@ const start = () => {
       } else {
         condition = ''
       }
-      console.log(condition)
-      const sql = `SELECT COUNT(sellerRoleid) as total FROM cbg_role_info ${condition}; SELECT * FROM cbg_role_info ${condition}  ORDER BY ${order.join(',')} LIMIT ${(currentPage - 1) * pageSize},${currentPage * pageSize};`
+      order = order.length !== 0 ? `ORDER BY ${order.join(',')}` : ''
+      const sql = `SELECT COUNT(sellerRoleid) as total FROM cbg_role_info ${condition}; SELECT * FROM cbg_role_info ${condition} ${order} LIMIT ${(currentPage - 1) * pageSize},${pageSize};`
       console.log(sql)
       connection.query(sql, function (error, results) {
         connection.release()
