@@ -6,10 +6,13 @@
     <video loop="loop" autoplay="autoplay" ref="bg" class="bgvideo" x5-playsinline="" playsinline="" webkit-playsinline="true">
     </video>
     <div class="title_custom">
-      <svg-icon name="setting" className="setting" @click="settingVisible=true"></svg-icon>
-      <svg-icon name="mini" className="mini" @click="mini"></svg-icon>
-      <svg-icon :name="status" :className="status" @click="max"></svg-icon>
-      <svg-icon name="close" className="close" @click="close"></svg-icon>
+      <div class="content"></div>
+      <div class="option">
+        <svg-icon name="setting" className="setting" @click="settingVisible=true"></svg-icon>
+        <svg-icon name="mini" className="mini" @click="mini"></svg-icon>
+        <svg-icon :name="status" :className="status" @click="max"></svg-icon>
+        <svg-icon name="close" className="close" @click="close"></svg-icon>
+      </div>
     </div>
     <router-view></router-view>
     <el-dialog
@@ -191,9 +194,12 @@ export default {
   .title_custom{
     position: fixed;
     top: 0;
-    width: 100%;
+    right: 0;
+    left: 0;
     display: flex;
-    justify-content: end;
+  }
+  .title_custom>div:first-child{
+    flex: 1 1 auto;
     -webkit-app-region: drag;
   }
   .setting{

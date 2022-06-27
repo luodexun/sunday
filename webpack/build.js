@@ -10,7 +10,6 @@ const webpack = require('webpack')
 const Listr = require('listr')
 const Multispinner = require('multispinner')
 
-
 const mainConfig = require('./webpack.main')
 const rendererConfig = require('./webpack.dev')
 const webConfig = require('./webpack.web.config')
@@ -100,10 +99,10 @@ function pack (config) {
           chunks: false,
           colors: true
         })
-        .split(/\r?\n/)
-        .forEach(line => {
-          err += `    ${line}\n`
-        })
+          .split(/\r?\n/)
+          .forEach(line => {
+            err += `    ${line}\n`
+          })
 
         reject(err)
       } else {
