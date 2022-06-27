@@ -123,7 +123,7 @@ module.exports = {
   output: {
     filename: '[name].js',
     libraryTarget: 'commonjs2',
-    publicPath: '/',
+    publicPath: './',
     path: path.join(__dirname, '../dist/electron')
   },
   resolve: {
