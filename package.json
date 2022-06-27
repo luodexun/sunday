@@ -18,9 +18,13 @@
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config webpack/webpack.renderer.config.js",
     "postinstall": "npm run lint:fix"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/luodexun/west.git"
+  },
   "build": {
     "productName": "xiyou",
-    "appId": "com.example.yourapp",
+    "appId": "com.letmexiu.ldx",
     "directories": {
       "output": "build"
     },
@@ -76,7 +80,7 @@
         "owner": "luodexun",
         "repo": "https://github.com/luodexun/west.git",
         "private": false,
-        "token": "***",
+        "token": "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",
         "releaseType": "release"
       }
     ]
@@ -110,7 +114,7 @@
     "del": "^3.0.0",
     "devtron": "^1.4.0",
     "electron": "^15.3.0",
-    "electron-builder": "^20.19.2",
+    "electron-builder": "^22.7.0",
     "electron-debug": "^1.5.0",
     "electron-devtools-installer": "^2.2.4",
     "electron-updater": "^5.0.5",
