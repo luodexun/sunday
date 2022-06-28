@@ -15,6 +15,12 @@ const { merge } = require('webpack-merge')
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/webpack-configurations.html#white-listing-externals
  */
 module.exports = merge(webpackCommonConfig, {
+  output: {
+    filename: '[name].js',
+    libraryTarget: 'commonjs2',
+    publicPath: '/',
+    path: path.join(__dirname, '../dist/electron')
+  },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),

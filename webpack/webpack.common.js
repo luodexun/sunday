@@ -120,12 +120,6 @@ module.exports = {
       cdnConfig: getCdnConfig()
     })
   ],
-  output: {
-    filename: '[name].js',
-    libraryTarget: 'commonjs2',
-    publicPath: './',
-    path: path.join(__dirname, '../dist/electron')
-  },
   resolve: {
     alias: {
       '@': path.join(__dirname, '../src/renderer'),

@@ -5,13 +5,12 @@ process.env.NODE_ENV = 'production'
 const { say } = require('cfonts')
 const chalk = require('chalk')
 const del = require('del')
-const { spawn } = require('child_process')
 const webpack = require('webpack')
 const Listr = require('listr')
 const Multispinner = require('multispinner')
 
 const mainConfig = require('./webpack.main')
-const rendererConfig = require('./webpack.dev')
+const rendererConfig = require('./webpack.prod')
 const webConfig = require('./webpack.web.config')
 
 const doneLog = chalk.bgGreen.white(' DONE ') + ' '
