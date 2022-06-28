@@ -3,6 +3,13 @@
 // eslint-disable-next-line standard/object-curly-even-spacing
 import { app, BrowserWindow, ipcMain} from 'electron'
 import start from './ipc'
+import update from './update'
+
+Object.defineProperty(app, 'isPackaged', {
+  get () {
+    return true
+  }
+})
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -21,7 +28,7 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 620,
+    height: 630,
     useContentSize: true,
     width: 1000,
     minWidth: 1000,
@@ -36,6 +43,7 @@ function createWindow () {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+  update(mainWindow)
 }
 
 app.on('ready', createWindow)

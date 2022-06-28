@@ -6,7 +6,7 @@
   "license": null,
   "main": "./dist/electron/main.js",
   "scripts": {
-    "build": "electron-builder -p always",
+    "build": "node webpack/build.js && electron-builder -m",
     "build:dir": "node webpack/build.js && electron-builder --dir",
     "build:clean": "cross-env BUILD_TARGET=clean node webpack/build.js",
     "build:web": "cross-env BUILD_TARGET=web node webpack/build.js",
@@ -58,13 +58,25 @@
       ]
     },
     "mac": {
-      "icon": "build/icons/icon.icns"
+      "icon": "build/icons/icon.icns",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ]
     },
     "win": {
       "icon": "build/icons/icon.ico",
       "target": [
         {
-          "target": "nsis"
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
         }
       ]
     },
@@ -80,7 +92,7 @@
         "owner": "luodexun",
         "repo": "west",
         "private": true,
-        "token": "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",
+        "token": "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",
         "releaseType": "release"
       }
     ]
@@ -91,6 +103,7 @@
     "axios": "^0.18.0",
     "core-js": "^3.23.2",
     "electron-store": "^8.0.2",
+    "electron-updater": "^5.0.5",
     "element-ui": "^2.15.9",
     "mysql": "^2.18.1",
     "vue": "^2.5.16",
@@ -115,10 +128,10 @@
     "del": "^3.0.0",
     "devtron": "^1.4.0",
     "electron": "^15.3.0",
-    "electron-builder": "^20.19.2",
+    "electron-builder": "^23.1.0",
     "electron-debug": "^1.5.0",
     "electron-devtools-installer": "^2.2.4",
-    "electron-updater": "^5.0.5",
+    "electron-log": "^4.4.8",
     "eslint": "^4.19.1",
     "eslint-config-standard": "^11.0.0",
     "eslint-friendly-formatter": "^4.0.1",
