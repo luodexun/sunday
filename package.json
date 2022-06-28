@@ -78,15 +78,16 @@
       {
         "provider": "github",
         "owner": "luodexun",
-        "repo": "https://github.com/luodexun/west.git",
+        "repo": "west",
         "private": true,
-        "token": "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",
+        "token": "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",
         "releaseType": "release"
       }
     ]
   },
   "dependencies": {
     "@babel/runtime": "^7.18.3",
+    "@octokit/core": "^3.6.0",
     "axios": "^0.18.0",
     "core-js": "^3.23.2",
     "electron-store": "^8.0.2",

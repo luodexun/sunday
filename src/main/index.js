@@ -26,8 +26,7 @@ function createWindow () {
     width: 1000,
     minWidth: 1000,
     minHeight: 630,
-    frame: false,
-    titleBarOverlay: true,
+    titleBarStyle: 'hidden',
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
