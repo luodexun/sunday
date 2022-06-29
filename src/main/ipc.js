@@ -4,7 +4,7 @@ import Store from 'electron-store'
 import mysql from 'mysql'
 import log from 'electron-log'
 log.transports.console.level = false
-log.transports.file.fileName = 'xiyou.log'
+log.transports.file.fileName = 'sunday.log'
 // 日志格式，默认：[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}]{scope} {text}
 log.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}]{scope} {text}'
 // 日志大小，默认：1048576（1M），达到最大上限后，备份文件并重命名为：main.old.log，有且仅有一个备份文件
