@@ -63,11 +63,11 @@ start()
 
 ipcMain.on('mini', e => mainWindow.minimize())
 ipcMain.on('max', e => {
-  if (mainWindow.isMaximized()) {
-    mainWindow.unmaximize()
+  if (mainWindow.isFullScreen()) {
+    mainWindow.restore()
     e.returnValue = {status: 'maximize'}
   } else {
-    mainWindow.maximize()
+    mainWindow.setFullScreen(true)
     e.returnValue = {status: 'minimize'}
   }
 })

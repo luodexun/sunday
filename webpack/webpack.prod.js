@@ -4,11 +4,12 @@ process.env.BABEL_ENV = 'renderer'
 
 const path = require('path')
 const webpack = require('webpack')
-
+const readEnv = require('./utils').readEnv
 const MinifyPlugin = require('babel-minify-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const webpackCommonConfig = require('./webpack.common.js')
 const { merge } = require('webpack-merge')
+const config = readEnv('./.env.production')
 /**
  * List of node_modules to include in webpack bundle
  *
@@ -33,7 +34,7 @@ module.exports = merge(webpackCommonConfig, {
       }
     ]),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': '"production"'
+      'process.env': config
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: true

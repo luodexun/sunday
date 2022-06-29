@@ -6,7 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 module.exports = {
   devtool: 'eval-cheap-module-source-map',
   entry: {
-    renderer: path.join(__dirname, process.platform === 'darwin' ? '../src/renderer/main.js' : '../src/renderer/winEntry.js')
+    renderer: path.join(__dirname, '../src/renderer/main.js')
   },
   externals: getExternals(),
   module: {

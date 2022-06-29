@@ -171,7 +171,7 @@ export default {
       return
     }
     data = parser.parse(data)
-    if (parser.isArr(data) && data.length === 0) {
+    if (!data || (parser.isArr(data) && data.length === 0)) {
       this.columns = columns
     } else {
       this.columns = data

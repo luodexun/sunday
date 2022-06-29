@@ -5,8 +5,17 @@
     </div>
     <video loop="loop" autoplay="autoplay" ref="bg" class="bgvideo" x5-playsinline="" playsinline="" webkit-playsinline="true">
     </video>
+    <div class="title_custom">
+      <div class="content"></div>
+      <div class="option" v-if="platform==='win'">
+        <svg-icon name="setting" className="setting" @click="settingVisible=true"></svg-icon>
+        <svg-icon name="mini" className="mini" @click="mini"></svg-icon>
+        <svg-icon :name="status" :className="status" @click="max"></svg-icon>
+        <svg-icon name="close" className="close" @click="close"></svg-icon>
+      </div>
+    </div>
     <router-view></router-view>
-    <el-button icon="el-icon-setting" circle plain size="mini" @click="settingVisible=true" class="setting_btn"></el-button>
+    <el-button icon="el-icon-setting" circle plain size="mini" @click="settingVisible=true" class="setting_btn" v-if="platform==='mac'"></el-button>
     <el-dialog
         :visible.sync="settingVisible"
         width="350px"
@@ -55,6 +64,7 @@
         <el-col :span="11" :offset="2"><el-button size="mini" type="primary" style="width: 100%" @click="save">保存</el-button></el-col>
       </el-row>
     </el-dialog>
+    <Update ref="update"/>
   </div>
 </template>
 
@@ -62,9 +72,11 @@
 import {ipcRenderer} from 'electron'
 import bg from './assets/bg.mp4'
 import Loading from './components/Loading'
+import Update from './components/Update'
 export default {
   data () {
     return {
+      platform: window.navigator.platform.indexOf('win') === -1 ? 'mac' : 'win',
       settingVisible: false,
       form: {
         host: '',
@@ -73,7 +85,8 @@ export default {
         password: '',
         database: ''
       },
-      loading: true
+      loading: true,
+      status: 'maximize'
     }
   },
   mounted () {
@@ -84,10 +97,12 @@ export default {
     this.$refs['bg'].src = bg
     setTimeout(() => {
       this.loading = false
-    }, 5000)
+      this.$refs['update'].CheckUpdate()
+    }, 3000)
   },
   components: {
-    Loading
+    Loading,
+    Update
   },
   methods: {
     ping () {
@@ -146,38 +161,76 @@ export default {
       } else {
         this.$message({type: 'error', message: msg})
       }
+    },
+    mini () {
+      ipcRenderer.send('mini')
+    },
+    max () {
+      let {status} = ipcRenderer.sendSync('max')
+      this.status = status
+    },
+    close () {
+      ipcRenderer.send('close')
     }
   }
 }
 </script>
 
 <style>
-  #app{
-    width: 100vw;
-    height: 100vh;
-    position: relative;
-  }
-  .mark{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: white;
-    z-index: 10;
-  }
-  .setting_btn{
-    position: absolute;
-    top: 1rem;
-    right: 2rem;
-  }
-  .bgvideo{
-    /*filter: blur(1px);*/
-    position: absolute;
-    top: -5%;
-    width: 100%;
-    height: 105%;
-    object-fit:cover;
-  }
+#app{
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+.mark{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  z-index: 10;
+}
+.setting_btn{
+  position: absolute;
+  top: 1rem;
+  right: 2rem;
+}
+.title_custom{
+  height: 31px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+}
+.title_custom>div:first-child{
+  flex: 1 1 auto;
+  -webkit-app-region: drag;
+}
+.setting{
+  color: #1b49bb;
+  padding: 0.5rem 0.7rem;
+}
+.mini{
+  color: #f18d0b;
+  padding: 0.5rem 0.4rem;
+}
+.minimize,.maximize{
+  color: #44a37c;
+  padding: 0.5rem 0.4rem;
+}
+.close{
+  color: #f60559;
+  padding: 0.5rem 0.4rem;
+}
+.bgvideo{
+  /*filter: blur(1px);*/
+  position: absolute;
+  top: -5%;
+  width: 100%;
+  height: 105%;
+  object-fit:cover;
+}
 </style>

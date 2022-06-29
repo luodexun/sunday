@@ -64,7 +64,7 @@ const start = () => {
       }
       let {condition, pagination: {currentPage, pageSize}, order} = params
       if (condition) {
-        if (/^(\d+)~(\d+)$/.test(condition.value)) {
+        if (/^(\d+)[~/-](\d+)$/.test(condition.value)) {
           condition = `WHERE ${condition.field} BETWEEN ${RegExp.$1} AND ${RegExp.$2}`
         } else {
           if (condition.isBlur) {

@@ -4,9 +4,11 @@ process.env.BABEL_ENV = 'renderer'
 
 const path = require('path')
 const webpack = require('webpack')
+const readEnv = require('./utils').readEnv
 
 const webpackCommonConfig = require('./webpack.common.js')
 const { merge } = require('webpack-merge')
+const config = readEnv('./.env.development')
 /**
  * List of node_modules to include in webpack bundle
  *
@@ -25,7 +27,8 @@ module.exports = merge(webpackCommonConfig, {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.DefinePlugin({
-      '__static': `"${path.join(__dirname, '../static').replace(/\\/g, '\\\\')}"`
+      '__static': `"${path.join(__dirname, '../static').replace(/\\/g, '\\\\')}"`,
+      'process.env': config
     })
   ]
 })

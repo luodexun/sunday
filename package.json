@@ -8,8 +8,8 @@
   "scripts": {
     "build": "node webpack/build.js && electron-builder -m",
     "build:dir": "node webpack/build.js && electron-builder --dir",
-    "build:clean": "cross-env BUILD_TARGET=clean node webpack/build.js",
-    "build:web": "cross-env BUILD_TARGET=web node webpack/build.js",
+    "clean": "cross-env BUILD_TARGET=clean node webpack/build.js",
+    "web": "cross-env BUILD_TARGET=web node webpack/build.js",
     "dev": "node webpack/dev-runner.js",
     "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter src",
     "lint:fix": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter --fix src",
@@ -92,7 +92,7 @@
         "owner": "luodexun",
         "repo": "west",
         "private": true,
-        "token": "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",
+        "token": "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",
         "releaseType": "release"
       }
     ]
@@ -127,6 +127,7 @@
     "css-loader": "^0.28.11",
     "del": "^3.0.0",
     "devtron": "^1.4.0",
+    "dotenv": "^16.0.1",
     "electron": "^15.3.0",
     "electron-builder": "^23.1.0",
     "electron-debug": "^1.5.0",
