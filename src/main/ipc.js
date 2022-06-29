@@ -2,6 +2,13 @@
 import { ipcMain} from 'electron'
 import Store from 'electron-store'
 import mysql from 'mysql'
+import log from 'electron-log'
+log.transports.console.level = false
+log.transports.file.fileName = 'xiyou.log'
+// 日志格式，默认：[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}]{scope} {text}
+log.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}]{scope} {text}'
+// 日志大小，默认：1048576（1M），达到最大上限后，备份文件并重命名为：main.old.log，有且仅有一个备份文件
+log.transports.file.maxSize = 1048576
 const store = new Store()
 let pool
 const start = () => {
@@ -78,7 +85,7 @@ const start = () => {
       }
       order = order.length !== 0 ? `ORDER BY ${order.join(',')}` : ''
       const sql = `SELECT COUNT(sellerRoleid) as total FROM cbg_role_info ${condition}; SELECT * FROM cbg_role_info ${condition} ${order} LIMIT ${(currentPage - 1) * pageSize},${pageSize};`
-      console.log(sql)
+      log.info(sql)
       connection.query(sql, function (error, results) {
         connection.release()
         if (error) {

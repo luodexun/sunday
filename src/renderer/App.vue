@@ -18,7 +18,7 @@
     <el-button icon="el-icon-setting" circle plain size="mini" @click="settingVisible=true" class="setting_btn" v-if="platform==='mac'"></el-button>
     <el-dialog
         :visible.sync="settingVisible"
-        width="350px"
+        width="370px"
         :show-close="false"
         append-to-body>
       <el-row type="flex" justify="center" style="align-items: center">
@@ -76,7 +76,7 @@ import Update from './components/Update'
 export default {
   data () {
     return {
-      platform: window.navigator.platform.indexOf('win') === -1 ? 'mac' : 'win',
+      platform: window.navigator.platform.toLocaleLowerCase().indexOf('win') === -1 ? 'mac' : 'win',
       settingVisible: false,
       form: {
         host: '',
