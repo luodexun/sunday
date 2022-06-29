@@ -20,6 +20,7 @@ function Message (mainWindow, type, data) {
 }
 // 更新应用的方法
 export default (mainWindow) => {
+  let index = 0
   // 在下载之前将autoUpdater的autoDownload属性设置成false，通过渲染进程触发主进程事件来实现这一设置(将自动更新设置成false)
   autoUpdater.autoDownload = false
 
@@ -64,6 +65,13 @@ export default (mainWindow) => {
     log.info('执行更新检查')
     autoUpdater.checkForUpdates().catch(err => {
       log.debug('网络连接问题', err)
+      if (index < 3) {
+        index++
+        log.debug(`尝试第${index}次重连`)
+        Message(mainWindow, 5)
+      } else {
+        log.error('连接失败请检查网络环境')
+      }
     })
   })
   // 退出并安装
