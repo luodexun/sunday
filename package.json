@@ -16,6 +16,7 @@
     "pack": "npm run pack:main && npm run pack:renderer",
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config webpack/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config webpack/webpack.renderer.config.js",
+    "icon": "electron-icon-builder --input=./src/renderer/assets/icon.png --output=./build",
     "postinstall": "npm run lint:fix"
   },
   "repository": {
@@ -58,7 +59,7 @@
       ]
     },
     "mac": {
-      "icon": "build/icons/icon.icns",
+      "icon": "build/icons/mac/icon.icns",
       "target": [
         {
           "target": "dmg",
@@ -70,7 +71,7 @@
       ]
     },
     "win": {
-      "icon": "build/icons/icon.ico",
+      "icon": "build/icons/win/icon.ico",
       "target": [
         {
           "target": "nsis",
@@ -91,8 +92,7 @@
         "provider": "github",
         "owner": "luodexun",
         "repo": "west",
-        "private": true,
-        "token": "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",
+        "private": false,
         "releaseType": "release"
       }
     ]
@@ -132,6 +132,7 @@
     "electron-builder": "^23.1.0",
     "electron-debug": "^1.5.0",
     "electron-devtools-installer": "^2.2.4",
+    "electron-icon-builder": "^2.0.1",
     "electron-log": "^4.4.8",
     "eslint": "^4.19.1",
     "eslint-config-standard": "^11.0.0",
