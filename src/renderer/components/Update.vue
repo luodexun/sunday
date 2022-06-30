@@ -55,6 +55,9 @@ export default {
             }
           })
           break
+        case 5:
+          ipcRenderer.send('check-update')
+          break
         default:
           break
       }
