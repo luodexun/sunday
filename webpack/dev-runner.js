@@ -9,7 +9,7 @@ const express = require('express')
 const webpack = require('webpack')
 const webpackDevMiddleware = require('webpack-dev-middleware')
 const webpackHotMiddleware = require('webpack-hot-middleware')
-
+const mocks = require('./mocks')
 const mainConfig = require('./webpack.main')
 const rendererConfig = require('./webpack.dev')
 
@@ -59,7 +59,7 @@ function startRenderer () {
     }))
 
     app.use(express.static(rendererConfig.output.path))
-
+    app.use(mocks())
     // Serve the files on port 9080.
     app.listen(9080, function () {
       resolve()
