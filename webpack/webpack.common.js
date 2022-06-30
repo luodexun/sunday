@@ -1,7 +1,6 @@
 const path = require('path')
 const {getExternals, resolve, getCdnConfig} = require('./utils')
 const {VueLoaderPlugin} = require('vue-loader')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 module.exports = {
   devtool: 'eval-cheap-module-source-map',
@@ -27,18 +26,6 @@ module.exports = {
         use: 'vue-loader'
       },
       {
-        test: /\.scss$/,
-        use: ['vue-style-loader', 'css-loader', 'sass-loader']
-      },
-      {
-        test: /\.sass$/,
-        use: ['vue-style-loader', 'css-loader', 'sass-loader?indentedSyntax']
-      },
-      {
-        test: /\.css$/,
-        use: ['vue-style-loader', 'css-loader']
-      },
-      {
         test: /\.html$/,
         use: 'vue-html-loader'
       },
@@ -53,11 +40,13 @@ module.exports = {
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            name: 'imgs/[name]--[folder].[ext]'
+        type: 'asset', // webpack5使用内置静态资源模块，且不指定具体，根据以下规则使用
+        generator: {
+          filename: 'imgs/[name]--[folder].[ext]' // ext本身会附带点，放入img目录下
+        },
+        parser: {
+          dataUrlCondition: {
+            maxSize: 10 * 1024 // 超过10kb的进行复制，不超过则直接使用base64
           }
         },
         exclude: [path.resolve('src/renderer/assets/svg')]
@@ -77,30 +66,35 @@ module.exports = {
               }]
             }
           }
-        ]
+        ],
+        include: [path.resolve('src/renderer/assets/svg')]
       },
       {
         test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-          name: 'media/[name]--[folder].[ext]'
+        type: 'asset/resource',
+        generator: {
+          filename: 'media/[name].[ext]' // 放入font目录下
+        },
+        parser: {
+          dataUrlCondition: {
+            maxSize: 10 * 1024 // 超过10kb的进行复制，不超过则直接使用base64
+          }
         }
       },
       {
-        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            name: 'fonts/[name]--[folder].[ext]'
-          }
+        test: /\.(ttf|woff2?|eot)$/,
+        type: 'asset/resource', // 指定静态资源类复制
+        generator: {
+          filename: 'fonts/[name]--[folder].[ext]' // 放入font目录下
         }
       }
     ]
   },
   cache: {
-    type: 'filesystem' // 使用本地缓存，默认使用内存
+    type: 'filesystem',
+    buildDependencies: {
+      config: [resolve('.env.development'), resolve('.env.production')]
+    }
   },
   node: {
     __dirname: process.env.NODE_ENV !== 'production',
@@ -108,9 +102,8 @@ module.exports = {
   },
   plugins: [
     new VueLoaderPlugin(),
-    new MiniCssExtractPlugin({filename: 'styles.css'}),
     new HtmlWebpackPlugin({
-      template: resolve('public/index.html'),
+      template: resolve('public/index.ejs'),
       inject: 'body',
       minify: {
         removeComments: true, // 移除HTML中的注释

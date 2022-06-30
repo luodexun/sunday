@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title><%= process.env.APP_TITLE %></title>
+    <% for (var i in htmlWebpackPlugin.options.cdnConfig && htmlWebpackPlugin.options.cdnConfig.css) { %>
+      <link rel="stylesheet" href="<%= htmlWebpackPlugin.options.cdnConfig.css[i] %>">
+    <% } %>
+    <% for (var i in htmlWebpackPlugin.options.cdnConfig && htmlWebpackPlugin.options.cdnConfig.js) { %>
+      <script src="<%= htmlWebpackPlugin.options.cdnConfig.js[i] %>" crossorigin="anonymous"></script>
+    <% } %>
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
