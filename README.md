@@ -1,25 +1,32 @@
-# xiyou
+# sunday
 
-> An electron-vue project
-
+###简介
++ 使用webpack5搭建
 #### Build Setup
 
 ``` bash
-# install dependencies
+# 安装依赖
 npm install
 
-# serve with hot reload at localhost:9080
+
+# 启动开发服务器
 npm run dev
 
-# build electron application for production
-npm run build
+# 打包
+npm run build 
 
-
-# lint all JS/Vue component files in `src/`
+# 格式化代码
 npm run lint
 
 ```
 
----
+-------
 
-This project was generated with [electron-vue](https://github.com/SimulatedGREG/electron-vue)@[8d4ed60](https://github.com/SimulatedGREG/electron-vue/tree/8d4ed607d65300381a8f47d97923eb07832b1a9a) using [vue-cli](https://github.com/vuejs/vue-cli). Documentation about the original structure can be found [here](https://simulatedgreg.gitbooks.io/electron-vue/content/index.html).
+## 测试数据库
+  | 参数名    | 参数说明       | 
+  | -------- | ------------ | 
+  | host     | 101.43.40.89 |
+  | port     | 3306         |  
+  | username | root         | 
+  | password | sqlapp2020xx |   
+  | database | dhxy         | 
