@@ -6,13 +6,18 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/',
+      path: '/home',
       name: 'home',
       component: r => require.ensure([], () => r(require('@/pages/Home')), 'home')
     },
     {
+      path: '/details',
+      name: 'details',
+      component: r => require.ensure([], () => r(require('@/pages/Details')), 'details')
+    },
+    {
       path: '*',
-      redirect: '/'
+      redirect: '/home'
     }
   ]
 })

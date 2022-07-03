@@ -29,6 +29,7 @@
           height="100%"
           :data="tableData"
           ref="view"
+          @row-click="goDetail"
           style="width: 100%">
         <el-table-column v-for="item in getColumnsActive" :prop="item.key" :label="item.label" :width="item.width" align="center" :key="item.id" :formatter="item.formatter" show-overflow-tooltip>
           <template #header="{column}">
@@ -295,10 +296,10 @@ export default {
       })
       ipcRenderer.send('setColumns', parser.fastStringify(this.columns))
       done()
+    },
+    goDetail (row) {
+      this.$router.push({name: 'details', params: row})
     }
-  },
-  destroyed () {
-    document.getElementsByClassName('el-table__body-wrapper').item(0).removeEventListener('scroll', targetFn)
   }
 }
 </script>

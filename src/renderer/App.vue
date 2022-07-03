@@ -3,8 +3,6 @@
     <div class="mark" v-if="loading">
       <Loading/>
     </div>
-    <video loop="loop" autoplay="autoplay" ref="bg" class="bgvideo" x5-playsinline="" playsinline="" webkit-playsinline="true">
-    </video>
     <div class="title_custom">
       <div class="content"></div>
       <div class="option" v-if="platform==='win'">
@@ -70,7 +68,6 @@
 
 <script>
 import {ipcRenderer} from 'electron'
-import bg from './assets/bg.mp4'
 import Loading from './components/Loading'
 import Update from './components/Update'
 export default {
@@ -94,7 +91,6 @@ export default {
     if (config) {
       this.form = config
     }
-    this.$refs['bg'].src = bg
     setTimeout(() => {
       this.loading = false
       this.$refs['update'].CheckUpdate()

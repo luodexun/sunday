@@ -4,17 +4,12 @@
 import { app, BrowserWindow, ipcMain} from 'electron'
 import start from './ipc'
 import update from './update'
-
-Object.defineProperty(app, 'isPackaged', {
-  get () {
-    return true
-  }
-})
+const isDev = require('electron-is-dev')
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
-if (process.env.NODE_ENV !== 'development') {
+if (isDev) {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
@@ -43,7 +38,7 @@ function createWindow () {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
-  update(mainWindow)
+  if (!isDev) update(mainWindow)
 }
 
 app.on('ready', createWindow)
