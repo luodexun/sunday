@@ -17,6 +17,7 @@
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config webpack/webpack.main.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --config webpack/webpack.prod.js",
     "icon": "electron-icon-builder --input=./src/renderer/assets/icon.png --output=./build",
+    "analyze": "cross-env NODE_ENV=production webpack --config webpack/webpack.analyzer.js",
     "postinstall": "npm run lint:fix"
   },
   "repository": {

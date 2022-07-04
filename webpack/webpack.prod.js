@@ -72,7 +72,7 @@ module.exports = merge(webpackCommonConfig, {
       : [])
   ],
   optimization: {
-    moduleIds: 'deterministic',
+    chunkIds: 'deterministic',
     runtimeChunk: true,
     minimize: true,
     minimizer: [
@@ -104,7 +104,15 @@ module.exports = merge(webpackCommonConfig, {
         vendor: {
           test: /node_modules/,
           chunks: 'all',
+          filename: '[id]_vendor.js',
           priority: 10, // 优先级
+          enforce: true
+        },
+        elementUi: {
+          test: /node_modules\/element-ui/,
+          chunks: 'all',
+          filename: '[id]_ui.js',
+          priority: 20, // 优先级
           enforce: true
         },
         main: {
