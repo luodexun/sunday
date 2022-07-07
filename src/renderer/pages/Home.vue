@@ -20,18 +20,15 @@
         <el-button icon="el-icon-search" circle @click="query" class="select-btn"/>
       </template>
     </el-input>
-    <div style="margin: 0.5rem;z-index: 2;text-align: right">
-        <el-button icon="el-icon-s-operation" circle plain size="mini" @click="columnsVisible=true" ></el-button>
-    </div>
     <el-card>
       <el-table
           size="mini"
           height="100%"
           :data="tableData"
           ref="view"
-          @row-click="goDetail"
+          @cell-click="onCell"
           style="width: 100%">
-        <el-table-column v-for="item in getColumnsActive" :prop="item.key" :label="item.label" :width="item.width" align="center" :key="item.id" :formatter="item.formatter" show-overflow-tooltip>
+        <el-table-column v-for="item in getColumnsActive" :prop="item.key" :label="item.label" :min-width="item.width" align="center" :key="item.id" :formatter="item.formatter" show-overflow-tooltip>
           <template #header="{column}">
             <div class="header_col">
               {{ column.label }}
@@ -56,6 +53,9 @@
         :page-size="pagination.pageSize"
         :total="pagination.total">
     </el-pagination>
+    <div class="config_sw">
+      <svg-icon name="left_arrow" className="drawer_open" @click="columnsVisible=true"></svg-icon>
+    </div>
     <el-drawer
         :visible.sync="columnsVisible"
         :size="200"
@@ -95,6 +95,7 @@ import {ipcRenderer} from 'electron'
 import {parser} from '../utils'
 import draggable from 'vuedraggable'
 import Loading from '../components/Loading'
+import {debounce} from 'loadsh/function'
 const columns = [
   {id: '01', key: 'sellerRoleid', label: '游戏ID', sort: 'asc', status: false, width: 120},
   {id: '02', key: 'level', label: '人物等级', sort: false, status: false, width: 80},
@@ -145,6 +146,8 @@ let scrollLeft = 0
 const targetFn = (e) => {
   scrollLeft = e.target.scrollLeft
 }
+// eslint-disable-next-line no-unused-vars
+let callback = null
 export default {
   data () {
     return {
@@ -154,6 +157,7 @@ export default {
       columnsVisible: false,
       loading: false,
       drag: false,
+      erd: null,
       pagination: {
         currentPage: 1,
         pageSize: 10,
@@ -181,7 +185,21 @@ export default {
     this.orderArr = this.orderList.map(item => `${item.key} ${item.sort}`)
   },
   mounted () {
-    document.getElementsByClassName('el-table__body-wrapper').item(0).addEventListener('scroll', targetFn)
+    const element = document.getElementsByClassName('el-table__body-wrapper').item(0)
+    element.addEventListener('scroll', targetFn)
+    let db = debounce((element) => {
+      this.$nextTick(() => {
+        this.pagination.currentPage = 1
+        this.pagination.pageSize = Math.floor(element.offsetHeight / 35)
+        this.query()
+      })
+    }, 500)
+    callback = () => {
+      this.tableData = []
+      this.loading = true
+      db(element)
+    }
+    window.addEventListener('resize', callback)
   },
   computed: {
     params () {
@@ -297,9 +315,17 @@ export default {
       ipcRenderer.send('setColumns', parser.fastStringify(this.columns))
       done()
     },
-    goDetail (row) {
-      this.$router.push({name: 'details', params: row})
+    onCell (row, column) {
+      if (column.property === 'cbgUrl') {
+        ipcRenderer.send('openWeb', row['cbgUrl'])
+      }
+      if (column.property === 'sellerRoleid') {
+        this.$router.push({path: '/details', query: row})
+      }
     }
+  },
+  beforeDestroy () {
+    window.removeEventListener('resize', callback)
   }
 }
 </script>
@@ -309,6 +335,7 @@ export default {
   border: 1px solid #f4075a;
   border-radius: 7px;
   font-size: 12px;
+  z-index: 2;
   background-color: rgba(0, 0, 51, .55);
 }
 
@@ -356,6 +383,7 @@ export default {
 
 .el-card {
   height: 100%;
+  margin-top: 35px;
   background-color: rgba(0, 0, 51, 0.55);
   border-radius: 7px;
   border: 1px solid #46ded9;
@@ -410,7 +438,7 @@ export default {
 
 .el-table--enable-row-hover .el-table__body tr:hover {
   color: #46ded9;
-  transform: scale(1.02);
+  cursor: pointer;
 }
 .el-pagination{
   text-align: end;
@@ -511,5 +539,26 @@ dialog
 }
 .list-group-item i {
   cursor: pointer;
+}
+.config_sw{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 5px;
+  display: flex;
+  align-items: center;
+  z-index: 2;
+}
+.drawer_open{
+  width: 30px !important;
+  height: 30px !important;
+  color: #f67105;
+  opacity: .6;
+}
+.config_sw:hover>.drawer_open{
+  animation-delay: 1s;
+  opacity: 1;
+  transition: .3s;
+  transform: scale(1.2);
 }
 </style>

@@ -12,6 +12,7 @@
         <svg-icon name="close" className="close" @click="close"></svg-icon>
       </div>
     </div>
+    <Banner current-index="1"></Banner>
     <router-view></router-view>
     <el-button icon="el-icon-setting" circle plain size="mini" @click="settingVisible=true" class="setting_btn" v-if="platform==='mac'"></el-button>
     <el-dialog
@@ -70,6 +71,7 @@
 import {ipcRenderer} from 'electron'
 import Loading from './components/Loading'
 import Update from './components/Update'
+import Banner from './components/Banner'
 export default {
   data () {
     return {
@@ -98,7 +100,8 @@ export default {
   },
   components: {
     Loading,
-    Update
+    Update,
+    Banner
   },
   methods: {
     ping () {
@@ -192,6 +195,7 @@ export default {
   position: absolute;
   top: 1rem;
   right: 2rem;
+  z-index: 2;
 }
 .title_custom{
   height: 31px;

@@ -42,7 +42,7 @@ module.exports = {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         type: 'asset', // webpack5使用内置静态资源模块，且不指定具体，根据以下规则使用
         generator: {
-          filename: 'imgs/[name]--[folder].[ext]' // ext本身会附带点，放入img目录下
+          filename: 'imgs/[name][ext]' // ext本身会附带点，放入img目录下
         },
         parser: {
           dataUrlCondition: {

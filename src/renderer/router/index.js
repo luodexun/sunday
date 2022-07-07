@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-export default new Router({
+const route = new Router({
   routes: [
     {
       path: '/home',
@@ -21,3 +21,8 @@ export default new Router({
     }
   ]
 })
+route.beforeEach((to, from, next) => {
+  console.log(to, from)
+  next()
+})
+export default route

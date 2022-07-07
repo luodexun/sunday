@@ -1,9 +1,10 @@
 'use strict'
 
 // eslint-disable-next-line standard/object-curly-even-spacing
-import { app, BrowserWindow, ipcMain} from 'electron'
+import { app, BrowserWindow, ipcMain, shell} from 'electron'
 import start from './ipc'
 import update from './update'
+import log from 'electron-log'
 const isDev = require('electron-is-dev')
 /**
  * Set `__static` path to static files in production
@@ -25,8 +26,8 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     height: 630,
     useContentSize: true,
-    width: 1000,
-    minWidth: 1000,
+    width: 1100,
+    minWidth: 1100,
     minHeight: 630,
     titleBarStyle: 'hidden',
     webPreferences: {
@@ -67,6 +68,12 @@ ipcMain.on('max', e => {
   }
 })
 ipcMain.on('close', e => mainWindow.close())
+
+ipcMain.on('openWeb', (e, url) => {
+  shell.openExternal(url).then(() => {
+    log.info('打开网页:' + url)
+  })
+})
 /**
  * Auto Updater
  *

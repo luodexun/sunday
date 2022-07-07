@@ -53,7 +53,6 @@ module.exports = function () {
       next(null, callback(chunk, index++))
     }
     trans._flush = function (cb) {
-      console.log(123)
       cb()
     }
     return trans
