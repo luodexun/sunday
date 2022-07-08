@@ -2,7 +2,7 @@
   <div ref="mySwiper" class="swiper-container" :id="currentIndex"  >
     <div class="swiper-wrapper custom_swiper">
       <div class="swiper-slide my-swiper-slide" v-for="item of 29" :key="item">
-        <div :style="{width:'100%',height:'100%',background:`url(./imgs/${item}.jpg) center/cover no-repeat`}"></div>
+        <div :style="{width:'100%',height:'100%',background:`url(./static/banner/${item}.jpg) center/cover no-repeat`}"></div>
       </div>
     </div>
   </div>
