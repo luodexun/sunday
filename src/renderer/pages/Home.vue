@@ -20,7 +20,7 @@
         <el-button icon="el-icon-search" circle @click="query" class="select-btn"/>
       </template>
     </el-input>
-    <el-card>
+    <el-card class="custom_table">
       <el-table
           size="mini"
           height="100%"
@@ -48,6 +48,7 @@
         background
         small
         layout="prev, pager, next,total"
+        class="custom-pagination"
         @current-change="query"
         :current-page.sync="pagination.currentPage"
         :page-size="pagination.pageSize"
@@ -117,11 +118,11 @@ const columns = [
   {id: '19', key: 'factionLevel', label: '帮派修炼', sort: false, status: false, width: 80},
   {id: '20', key: 'tianYanLevel', label: '天演策', sort: false, status: false, width: 80},
   {id: '21', key: 'wuXingLevel', label: '五行等级', sort: 'asc', status: true, width: 80},
-  {id: '22', key: 'fire', label: '火五行', sort: false, status: true, width: 80},
-  {id: '23', key: 'soil', label: '土五行', sort: false, status: true, width: 80},
-  {id: '24', key: 'water', label: '水五行', sort: false, status: true, width: 80},
-  {id: '25', key: 'wood', label: '木五行', sort: false, status: true, width: 80},
-  {id: '26', key: 'gold', label: '金五行', sort: false, status: true, width: 80},
+  {id: '22', key: 'fire', label: '火五行', sort: 'asc', status: true, width: 80},
+  {id: '23', key: 'soil', label: '土五行', sort: 'asc', status: true, width: 80},
+  {id: '24', key: 'water', label: '水五行', sort: 'asc', status: true, width: 80},
+  {id: '25', key: 'wood', label: '木五行', sort: 'asc', status: true, width: 80},
+  {id: '26', key: 'gold', label: '金五行', sort: 'asc', status: true, width: 80},
   {id: '27',
     key: 'suitLevel',
     label: '套装品阶',
@@ -330,89 +331,7 @@ export default {
 }
 </script>
 
-<style>
-.input-with-select {
-  border: 1px solid #f4075a;
-  border-radius: 7px;
-  font-size: 12px;
-  z-index: 2;
-  background-color: rgba(0, 0, 51, .55);
-}
-
-.el-input-group__append, .el-input-group--append .el-input__inner, .el-input-group__prepend {
-  position: relative;
-  color: #fb04ad;
-  border: none;
-}
-
-.el-input-group__append::before {
-  content: "";
-  width: 2px;
-  position: absolute;
-  top: 8px;
-  bottom: 8px;
-  background-color: #5daf34;
-  left: -1px;
-}
-
-.el-input__inner::-webkit-input-placeholder {
-  color: rebeccapurple;
-}
-
-.el-input-group__prepend::after {
-  content: "";
-  width: 2px;
-  position: absolute;
-  top: 8px;
-  bottom: 8px;
-  background-color: #5daf34;
-  right: -1px;
-}
-.select-btn{
-  color: #f67105 !important;
-  width: 20px !important;
-  height: 20px !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  transform: translateY(1px) !important;
-}
-.select-btn:hover{
-  background-color: #f67105 !important;
-  color: white !important;
-}
-
-.el-card {
-  height: 100%;
-  margin-top: 35px;
-  background-color: rgba(0, 0, 51, 0.55);
-  border-radius: 7px;
-  border: 1px solid #46ded9;
-  margin-bottom:1rem;
-  z-index: 2;
-}
-
-.el-card {
-  background-color: rgba(0, 0, 51, 0.55);
-  border-radius: 7px;
-  border: 1px solid #46ded9;
-}
-.el-card__body{
-  height: 100%;
-  box-sizing: border-box;
-}
-
-.el-table {
-  color: #f67105;
-}
-
-.el-table::before {
-  height: 0;
-}
-
-.el-table thead {
-  color: #5daf34;
-  font-weight: 600;
-}
+<style lang="scss">
 
 .container {
   width: 100%;
@@ -423,99 +342,170 @@ export default {
   flex-direction: column;
 }
 
-.el-table tr, .el-table th.el-table__cell, .el-table, .el-input__inner, .el-input-group__prepend, .el-input-group__append {
-  overflow: hidden;
-  background-color: transparent;
+.input-with-select {
+  border: 1px solid #f4075a;
+  border-radius: 7px;
+  font-size: 12px;
+  z-index: 2;
+  background-color: rgba(0, 0, 51, .55);
+  .el-input__inner, .el-input-group__prepend, .el-input-group__append {
+    overflow: hidden;
+    border: none;
+    background-color: transparent;
+    position: relative;
+    color: #fb04ad;
+  }
+  .el-input__inner{
+    color: #04fb52;
+  }
+  .el-input-group__append::before {
+    content: "";
+    width: 2px;
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    background-color: #5daf34;
+    left: -1px;
+  }
+
+  .el-input__inner::-webkit-input-placeholder {
+    color: rebeccapurple;
+  }
+
+  .el-input-group__prepend::after {
+    content: "";
+    width: 2px;
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    background-color: #5daf34;
+    right: -1px;
+  }
+
+  .select-btn{
+    color: #f67105 !important;
+    width: 20px !important;
+    height: 20px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    transform: translateY(1px) !important;
+  }
+
+  .select-btn:hover{
+    background-color: #f67105 !important;
+    color: white !important;
+  }
+}
+.custom_table {
+  height: 100%;
+  margin-top: 35px;
+  background-color: rgba(0, 0, 51, 0.55);
+  border-radius: 7px;
+  border: 1px solid #46ded9;
+  margin-bottom:1rem;
+  z-index: 2;
+  .el-card__body{
+    height: 100%;
+    box-sizing: border-box;
+  }
+
+  .el-table {
+    color: #f67105;
+  }
+
+  .el-table::before {
+    height: 0;
+  }
+
+  .el-table thead {
+    color: #5daf34;
+    font-weight: 600;
+  }
+
+  .el-table tr, .el-table th.el-table__cell, .el-table{
+    overflow: hidden;
+    background-color: transparent;
+  }
+
+  .el-table td.el-table__cell, .el-table th.el-table__cell.is-leaf {
+    border-bottom: transparent;
+  }
+
+  .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell {
+    background-color: transparent;
+  }
+
+  .el-table--enable-row-hover .el-table__body tr:hover {
+    color: #46ded9;
+    cursor: pointer;
+  }
+
+  .header_col {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .order {
+    display: inline-block;
+    margin-left: 3px;
+    margin-top: 1px;
+    width: 8px;
+    height: 8px;
+  }
+
+  .asc {
+    color: #f4075a;
+    margin-top: 0.1rem;
+  }
+
+  .desc {
+    color: #0299f5;
+    margin-top: 0.1rem;
+  }
 }
 
-.el-table td.el-table__cell, .el-table th.el-table__cell.is-leaf {
-  border-bottom: transparent;
-}
 
-.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell {
-  background-color: transparent;
-}
 
-.el-table--enable-row-hover .el-table__body tr:hover {
-  color: #46ded9;
-  cursor: pointer;
-}
-.el-pagination{
+
+
+
+
+
+.custom-pagination{
   text-align: end;
   z-index: 2;
-}
-.el-pagination.is-background .el-pager li {
-  background-color: rgba(0, 0, 51, .55);
-  border: 1px solid #00ffcf;
-  color: #fb04ad;
-  border-radius: 5px;
-  font-weight: 500;
-}
-
-.el-pagination.is-background .el-pager li.active {
-  border: none;
-}
-
-.el-pagination .btn-next, .el-pagination .btn-prev {
-  background-color: rgba(0, 0, 51, .55) !important;
-  cursor: pointer;
-  border: 1px solid #00ffcf;
-  color: #08ec1b !important;
-  border-radius: 5px !important;
-  font-weight: 500;
-}
-.el-pagination__total{
-  color: #f67105;
-}
-
-/**
- tu
- */
-.header_col {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  .el-pager li {
+    background-color: rgba(0, 0, 51, .55) !important;
+    border: 1px solid #00ffcf !important;
+    color: #fb04ad !important;
+    border-radius: 5px !important;
+    font-weight: 500 !important;
+  }
+  .el-pager li.active {
+    border: none !important;
+    color: #e4e6ec !important;
+    background-color: #0299f5 !important;
+  }
+  .btn-next, .el-pagination,.btn-prev {
+    background-color: rgba(0, 0, 51, .55) !important;
+    cursor: pointer;
+    border: 1px solid #00ffcf;
+    color: #08ec1b !important;
+    border-radius: 5px !important;
+    font-weight: 500;
+  }
+  .el-pagination__total{
+    color: #f67105;
+  }
 }
 
-.order {
-  display: inline-block;
-  margin-left: 3px;
-  margin-top: 1px;
-  width: 8px;
-  height: 8px;
-}
 
-.asc {
-  color: #f4075a;
-  margin-top: 0.1rem;
-}
 
-.desc {
-  color: #0299f5;
-  margin-top: 0.1rem;
-}
 /**
 dialog
  */
-.el-dialog__wrapper{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.el-dialog{
-  border-radius: 7px;
-  border: 1px solid #f67105;
-}
-.el-dialog__header{
-  display: none;
-}
 
-.label{
-  color: #6c2894;
-  font-weight: bold;
-  display: flex;
-  justify-content: flex-end;
-}
 
 .el-table__empty-block{
   width: 100% !important;

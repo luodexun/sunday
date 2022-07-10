@@ -14,53 +14,59 @@
     </div>
     <Banner current-index="1"></Banner>
     <router-view></router-view>
-    <el-button icon="el-icon-setting" circle plain size="mini" @click="settingVisible=true" class="setting_btn" v-if="platform==='mac'"></el-button>
+    <el-button icon="el-icon-setting" circle plain size="mini" @click="settingVisible=true" class="setting_btn"
+               v-if="platform==='mac'"></el-button>
     <el-dialog
         :visible.sync="settingVisible"
         width="370px"
         :show-close="false"
+        class="custom-dialog"
         append-to-body>
       <el-row type="flex" justify="center" style="align-items: center">
         <el-col :span="6" class="label">
-          <label  >host:&nbsp;</label>
+          <label>host:&nbsp;</label>
         </el-col>
         <el-col :span="9">
           <el-input v-model="form.host" size="mini" id="host"></el-input>
         </el-col>
         <el-col :offset="1" :span="3" class="label">
-          <label >port:&nbsp;</label>
+          <label>port:&nbsp;</label>
         </el-col>
         <el-col :span="5">
           <el-input v-model="form.port" size="mini" id="port"></el-input>
         </el-col>
       </el-row>
       <el-row type="flex" justify="center" style="align-items: center;margin-top: 10px">
-        <el-col :span="6"  class="label">
-          <label >username:&nbsp;</label>
+        <el-col :span="6" class="label">
+          <label>username:&nbsp;</label>
         </el-col>
         <el-col :span="18">
           <el-input v-model="form.user" size="mini" id="username"></el-input>
         </el-col>
       </el-row>
       <el-row type="flex" justify="center" style="align-items: center;margin-top: 10px">
-        <el-col :span="6"  class="label">
-          <label >password:&nbsp;</label>
+        <el-col :span="6" class="label">
+          <label>password:&nbsp;</label>
         </el-col>
         <el-col :span="18">
           <el-input v-model="form.password" size="mini" id="password"></el-input>
         </el-col>
       </el-row>
       <el-row type="flex" justify="center" style="align-items: center;margin-top: 10px">
-        <el-col :span="6"  class="label">
-          <label >database:&nbsp;</label>
+        <el-col :span="6" class="label">
+          <label>database:&nbsp;</label>
         </el-col>
         <el-col :span="18">
           <el-input v-model="form.database" size="mini" id="database"></el-input>
         </el-col>
       </el-row>
-      <el-row  type="flex" justify="center" style="align-items: center;margin-top: 15px">
-        <el-col :span="11" ><el-button size="mini" type="primary" style="width: 100%" @click="ping">测试</el-button></el-col>
-        <el-col :span="11" :offset="2"><el-button size="mini" type="primary" style="width: 100%" @click="save">保存</el-button></el-col>
+      <el-row type="flex" justify="center" style="align-items: center;margin-top: 15px">
+        <el-col :span="11">
+          <el-button size="mini" type="primary" style="width: 100%" @click="ping">测试</el-button>
+        </el-col>
+        <el-col :span="11" :offset="2">
+          <el-button size="mini" type="primary" style="width: 100%" @click="save">保存</el-button>
+        </el-col>
       </el-row>
     </el-dialog>
     <Update ref="update"/>
@@ -72,10 +78,11 @@ import {ipcRenderer} from 'electron'
 import Loading from './components/Loading'
 import Update from './components/Update'
 import Banner from './components/Banner'
+
 export default {
   data () {
     return {
-      platform: window.navigator.platform.toLocaleLowerCase().indexOf('win') !== -1 ? 'mac' : 'win',
+      platform: window.navigator.platform.toLocaleLowerCase().indexOf('win') === -1 ? 'mac' : 'win',
       settingVisible: false,
       form: {
         host: '',
@@ -175,13 +182,14 @@ export default {
 }
 </script>
 
-<style>
-#app{
+<style lang="scss">
+#app {
   width: 100vw;
   height: 100vh;
   position: relative;
 }
-.mark{
+
+.mark {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -191,13 +199,15 @@ export default {
   background-color: white;
   z-index: 10;
 }
-.setting_btn{
+
+.setting_btn {
   position: absolute;
   top: 1rem;
   right: 2rem;
   z-index: 2;
 }
-.title_custom{
+
+.title_custom {
   height: 31px;
   position: fixed;
   top: 0;
@@ -206,32 +216,60 @@ export default {
   display: flex;
   z-index: 2;
 }
-.title_custom>div:first-child{
+
+.title_custom > div:first-child {
   flex: 1 1 auto;
   -webkit-app-region: drag;
 }
-.setting{
+
+.custom-dialog {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .el-dialog {
+    border-radius: 7px;
+    border: 1px solid #f67105;
+  }
+
+  .el-dialog__header {
+    display: none;
+  }
+
+  .label {
+    color: #285a94;
+    font-weight: bold;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.setting {
   color: #1b49bb;
   padding: 0.5rem 0.7rem;
 }
-.mini{
+
+.mini {
   color: #f18d0b;
   padding: 0.5rem 0.4rem;
 }
-.minimize,.maximize{
+
+.minimize, .maximize {
   color: #44a37c;
   padding: 0.5rem 0.4rem;
 }
-.close{
+
+.close {
   color: #f60559;
   padding: 0.5rem 0.4rem;
 }
-.bgvideo{
+
+.bgvideo {
   /*filter: blur(1px);*/
   position: absolute;
   top: -5%;
   width: 100%;
   height: 105%;
-  object-fit:cover;
+  object-fit: cover;
 }
 </style>

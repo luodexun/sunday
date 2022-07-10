@@ -6,7 +6,7 @@
   "license": null,
   "main": "./dist/electron/main.js",
   "scripts": {
-    "build": "node webpack/build.js && electron-builder -mw -p always",
+    "build": "electron-builder -mw -p always",
     "build:dir": "node webpack/build.js && electron-builder --dir",
     "clean": "cross-env BUILD_TARGET=clean node webpack/build.js",
     "web": "cross-env BUILD_TARGET=web node webpack/build.js",
@@ -156,6 +156,8 @@
     "mini-css-extract-plugin": "^2.6.1",
     "multispinner": "^0.2.1",
     "node-loader": "^0.6.0",
+    "postcss": "^8.4.14",
+    "postcss-loader": "^7.0.0",
     "sass": "^1.53.0",
     "sass-loader": "^7.0.3",
     "style-loader": "^0.21.0",
