@@ -4,12 +4,11 @@ process.env.BABEL_ENV = 'renderer'
 
 const path = require('path')
 const webpack = require('webpack')
-const { readEnv, getConditionalLoader } = require('./utils')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const {readEnv, getConditionalLoader} = require('./utils')
+const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 const MinifyPlugin = require('babel-minify-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
 const webpackCommonConfig = require('./webpack.common.js')
-const { merge } = require('webpack-merge')
+const {merge} = require('webpack-merge')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
@@ -30,11 +29,21 @@ module.exports = merge(webpackCommonConfig, {
     rules: [
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader']
+        use: [{
+          loader: MiniCssExtractPlugin.loader,
+          options: {
+            publicPath: '../'
+          }
+        }, 'css-loader']
       },
       {
         test: /\.s[ac]ss$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader', getConditionalLoader()]
+        use: [{
+          loader: MiniCssExtractPlugin.loader,
+          options: {
+            publicPath: '../'
+          }
+        }, 'css-loader', 'postcss-loader', 'sass-loader', getConditionalLoader()]
       }
     ]
   },
@@ -46,13 +55,6 @@ module.exports = merge(webpackCommonConfig, {
   },
   plugins: [
     new MinifyPlugin(),
-    new CopyWebpackPlugin([
-      {
-        from: path.join(__dirname, '../static'),
-        to: path.join(__dirname, '../dist/electron/static'),
-        ignore: ['.*']
-      }
-    ]),
     new webpack.DefinePlugin({
       'process.env': config
     }),
@@ -81,7 +83,7 @@ module.exports = merge(webpackCommonConfig, {
           preset: [
             'default',
             {
-              discardComments: { removeAll: true }
+              discardComments: {removeAll: true}
             }
           ]
         }

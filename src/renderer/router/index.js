@@ -22,7 +22,6 @@ const route = new Router({
   ]
 })
 route.beforeEach((to, from, next) => {
-  console.log(to, from)
   next()
 })
 export default route

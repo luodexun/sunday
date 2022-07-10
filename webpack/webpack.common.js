@@ -2,6 +2,7 @@ const path = require('path')
 const {getExternals, resolve, getCdnConfig} = require('./utils')
 const {VueLoaderPlugin} = require('vue-loader')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 module.exports = {
   devtool: 'eval-cheap-module-source-map',
   entry: {
@@ -73,7 +74,7 @@ module.exports = {
         test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
         type: 'asset/resource',
         generator: {
-          filename: 'media/[name].[ext]' // 放入font目录下
+          filename: 'media/[name][ext]' //
         },
         parser: {
           dataUrlCondition: {
@@ -85,7 +86,7 @@ module.exports = {
         test: /\.(ttf|woff2?|eot)$/,
         type: 'asset/resource', // 指定静态资源类复制
         generator: {
-          filename: 'fonts/[name]--[folder].[ext]' // 放入font目录下
+          filename: 'fonts/[name][ext]' // 放入font目录下
         }
       }
     ]
@@ -102,6 +103,13 @@ module.exports = {
   },
   plugins: [
     new VueLoaderPlugin(),
+    new CopyWebpackPlugin([
+      {
+        from: path.join(__dirname, '../static'),
+        to: path.join(__dirname, '../dist/electron/static'),
+        ignore: ['.*']
+      }
+    ]),
     new HtmlWebpackPlugin({
       template: resolve('public/index.ejs'),
       inject: 'body',
