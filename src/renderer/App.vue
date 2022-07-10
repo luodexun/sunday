@@ -75,7 +75,7 @@ import Banner from './components/Banner'
 export default {
   data () {
     return {
-      platform: window.navigator.platform.toLocaleLowerCase().indexOf('win') === -1 ? 'mac' : 'win',
+      platform: window.navigator.platform.toLocaleLowerCase().indexOf('win') !== -1 ? 'mac' : 'win',
       settingVisible: false,
       form: {
         host: '',
@@ -204,6 +204,7 @@ export default {
   right: 0;
   left: 0;
   display: flex;
+  z-index: 2;
 }
 .title_custom>div:first-child{
   flex: 1 1 auto;
